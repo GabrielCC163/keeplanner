@@ -1,0 +1,210 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2020-07-25T21:17:24.913Z",
+    "__export_source": "insomnia.desktop.app:v2020.3.3",
+    "resources": [{
+        "_id": "req_0181f67e9872450fbdae33de92bc0c51",
+        "authentication": {},
+        "body": {},
+        "created": 1594659764655,
+        "description": "",
+        "headers": [],
+        "isPrivate": false,
+        "metaSortKey": -1594659764656,
+        "method": "DELETE",
+        "modified": 1594659833910,
+        "name": "Remove ALL transactions",
+        "parameters": [],
+        "parentId": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "settingDisableRenderRequestBody": false,
+        "settingEncodeUrl": true,
+        "settingFollowRedirects": "global",
+        "settingRebuildPath": true,
+        "settingSendCookies": true,
+        "settingStoreCookies": true,
+        "url": "{{ base_url }}/api/transaction",
+        "_type": "request"
+    }, {
+        "_id": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "created": 1594495536798,
+        "description": "",
+        "modified": 1594495578171,
+        "name": "IGTI - Desafio Final - Finance Control API",
+        "parentId": null,
+        "scope": null,
+        "_type": "workspace"
+    }, {
+        "_id": "req_26615fb739384a54b25151089877b6d2",
+        "authentication": {},
+        "body": {},
+        "created": 1594659712810,
+        "description": "",
+        "headers": [],
+        "isPrivate": false,
+        "metaSortKey": -1594659712811,
+        "method": "DELETE",
+        "modified": 1594659724415,
+        "name": "Remove transaction",
+        "parameters": [],
+        "parentId": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "settingDisableRenderRequestBody": false,
+        "settingEncodeUrl": true,
+        "settingFollowRedirects": "global",
+        "settingRebuildPath": true,
+        "settingSendCookies": true,
+        "settingStoreCookies": true,
+        "url": "{{ base_url }}/api/transaction/5f0b7bf377314035bb41c647",
+        "_type": "request"
+    }, {
+        "_id": "req_44e656a41e3343e7a68e6a2cfa86fd15",
+        "authentication": {},
+        "body": {
+            "mimeType": "application/json",
+            "text": "{\n\t\"value\": 100\n}"
+        },
+        "created": 1594590323609,
+        "description": "",
+        "headers": [{
+            "id": "pair_fcf68768c2af4dfb92ccbff84a983dd9",
+            "name": "Content-Type",
+            "value": "application/json"
+        }],
+        "isPrivate": false,
+        "metaSortKey": -1594590323610,
+        "method": "PUT",
+        "modified": 1594590372639,
+        "name": "Update transaction",
+        "parameters": [],
+        "parentId": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "settingDisableRenderRequestBody": false,
+        "settingEncodeUrl": true,
+        "settingFollowRedirects": "global",
+        "settingRebuildPath": true,
+        "settingSendCookies": true,
+        "settingStoreCookies": true,
+        "url": "{{ base_url }}/api/transaction/5f0b7bf377314035bb41c647",
+        "_type": "request"
+    }, {
+        "_id": "req_898079996fc349d5bac4c49aa8e78ca8",
+        "authentication": {},
+        "body": {
+            "mimeType": "application/json",
+            "text": "{\n\t\"type\": \"-\",\n\t\"description\": \"Fatura Santander\",\n\t\"category\": \"Cartão\",\n\t\"value\": 950.50,\n\t\"date\": \"2020-01-03\"\n}"
+        },
+        "created": 1594587608903,
+        "description": "",
+        "headers": [{
+            "id": "pair_3ea91bb203584b3ba45833bb126cface",
+            "name": "Content-Type",
+            "value": "application/json"
+        }],
+        "isPrivate": false,
+        "metaSortKey": -1594587608903,
+        "method": "POST",
+        "modified": 1594588219041,
+        "name": "Create transaction",
+        "parameters": [],
+        "parentId": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "settingDisableRenderRequestBody": false,
+        "settingEncodeUrl": true,
+        "settingFollowRedirects": "global",
+        "settingRebuildPath": true,
+        "settingSendCookies": true,
+        "settingStoreCookies": true,
+        "url": "{{ base_url }}/api/transaction",
+        "_type": "request"
+    }, {
+        "_id": "req_1b1eabe610e04ff6a2e8d38058aa535f",
+        "authentication": {},
+        "body": {},
+        "created": 1594495593967,
+        "description": "",
+        "headers": [],
+        "isPrivate": false,
+        "metaSortKey": -1594495593967,
+        "method": "GET",
+        "modified": 1595689109354,
+        "name": "Transactions",
+        "parameters": [{
+            "description": "",
+            "id": "pair_f156421e43f54f5b8ab972f89dae6685",
+            "name": "period",
+            "value": "2020-07"
+        }, {
+            "description": "",
+            "id": "pair_51e9c7da8c4c4521bc3f4ca086c1e68e",
+            "name": "filter",
+            "value": "mar"
+        }],
+        "parentId": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "settingDisableRenderRequestBody": false,
+        "settingEncodeUrl": true,
+        "settingFollowRedirects": "global",
+        "settingRebuildPath": true,
+        "settingSendCookies": true,
+        "settingStoreCookies": true,
+        "url": "{{ base_url }}/api/transaction",
+        "_type": "request"
+    }, {
+        "_id": "req_3740f7f0f6b143aaa364dc773d678ea8",
+        "authentication": {},
+        "body": {},
+        "created": 1595638308181,
+        "description": "",
+        "headers": [],
+        "isPrivate": false,
+        "metaSortKey": -1594367329380,
+        "method": "GET",
+        "modified": 1595638317409,
+        "name": "Unique Transaction",
+        "parameters": [{
+            "description": "",
+            "id": "pair_f156421e43f54f5b8ab972f89dae6685",
+            "name": "period",
+            "value": "2020-01"
+        }],
+        "parentId": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "settingDisableRenderRequestBody": false,
+        "settingEncodeUrl": true,
+        "settingFollowRedirects": "global",
+        "settingRebuildPath": true,
+        "settingSendCookies": true,
+        "settingStoreCookies": true,
+        "url": "{{ base_url }}/api/transaction/5f0e4521889e1b09fcb45b95",
+        "_type": "request"
+    }, {
+        "_id": "env_c56be2d23744a246140fa711ae9ae8c95162525a",
+        "color": null,
+        "created": 1594495537046,
+        "data": {
+            "base_url": "http://localhost:3001"
+        },
+        "dataPropertyOrder": {
+            "&": ["base_url"]
+        },
+        "isPrivate": false,
+        "metaSortKey": 1594495537046,
+        "modified": 1594495859758,
+        "name": "Base Environment",
+        "parentId": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "_type": "environment"
+    }, {
+        "_id": "jar_c56be2d23744a246140fa711ae9ae8c95162525a",
+        "cookies": [],
+        "created": 1594495537053,
+        "modified": 1594495537053,
+        "name": "Default Jar",
+        "parentId": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "_type": "cookie_jar"
+    }, {
+        "_id": "spc_73cb835ed34548be8d424694be9e947e",
+        "contentType": "yaml",
+        "contents": "",
+        "created": 1594495536809,
+        "fileName": "IGTI - Desafio Final",
+        "modified": 1594495536809,
+        "parentId": "wrk_3c89c0d47a404783bc38b4aa97b3834f",
+        "_type": "api_spec"
+    }]
+}
