@@ -3,21 +3,18 @@ import Income from './Income';
 import Saving from './Saving';
 import Expense from './Expense';
 
-export default function Transactions({ incomes, expenses, handleEdition, handleDelete, onSubmit, onDelete }) {
+export default function Transactions({ savings, incomes, expenses, handleEdition, handleDelete, onSubmit, onDelete }) {
 	return (
 		<div className="section_transactions">
 			<ul>
 				<h3>Valores em poupanças</h3>
-				{incomes.map(({ id, day, type, category, description, value }, index) => {
+				{savings.map(({ id, accountName, totalValue }, index) => {
 					return (
 						<Saving
 							key={id}
 							id={id}
-							day={day}
-							type={type}
-							category={category}
-							description={description}
-							value={value}
+							accountName={accountName}
+							totalValue={totalValue}
 							handleEdition={handleEdition}
 							handleDelete={handleDelete}
 							onSubmit={onSubmit}
@@ -27,16 +24,15 @@ export default function Transactions({ incomes, expenses, handleEdition, handleD
 				})}
 
 				<h3>Receitas</h3>
-				{incomes.map(({ id, day, type, category, description, value }, index) => {
+				{incomes.map(({ id, accountName, totalValue, dayOfReceipt, fixed }, index) => {
 					return (
 						<Income
 							key={id}
 							id={id}
-							day={day}
-							type={type}
-							category={category}
-							description={description}
-							value={value}
+							accountName={accountName}
+							totalValue={totalValue}
+							dayOfReceipt={dayOfReceipt}
+							fixed={fixed}
 							handleEdition={handleEdition}
 							handleDelete={handleDelete}
 							onSubmit={onSubmit}
@@ -47,16 +43,16 @@ export default function Transactions({ incomes, expenses, handleEdition, handleD
 			</ul>
 			<ul>
 				<h3 style={{textAlign: 'right'}}>Despesas</h3>
-				{expenses.map(({ id, day, type, category, description, value }, index) => {
+				{expenses.map(({ id, description, totalValue, dueDay, dueMonth, status }, index) => {
 					return (
 						<Expense
 							key={id}
 							id={id}
-							day={day}
-							type={type}
-							category={category}
 							description={description}
-							value={value}
+							totalValue={totalValue}
+							dueDay={dueDay}
+							dueMonth={dueMonth}
+							status={status}
 							handleEdition={handleEdition}
 							handleDelete={handleDelete}
 							onSubmit={onSubmit}

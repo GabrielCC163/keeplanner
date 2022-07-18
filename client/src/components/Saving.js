@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ModalReact from './ModalReact';
 
-export default function Saving({ id, day, type, category, description, value, index, onSubmit, onDelete }) {
+export default function Saving({ id, accountName, totalValue, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
 
 	const openModal = () => {
@@ -17,14 +17,14 @@ export default function Saving({ id, day, type, category, description, value, in
 	};
 
 	return (
-		<li style={{ background: type === '+' ? '#a1f0dc' : '#f1a1a8' }}>
+		<li style={{background: 'grey'}}>
 			<div className="transaction">
 				<div className="transaction__info">
 					<div className="transaction__info-group">
-						<span className="transaction__info-description">{description}</span>
+						<span className="transaction__info-description">{accountName}</span>
 					</div>
 					<span className="transaction__info-value">
-						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)}
+						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)}
 					</span>
 				</div>
 				<div className="transaction__actions">

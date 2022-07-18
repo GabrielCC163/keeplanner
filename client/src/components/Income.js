@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ModalReact from './ModalReact';
 
-export default function Income({ id, day, type, category, description, value, index, onSubmit, onDelete }) {
+export default function Income({ id, accountName, totalValue, dayOfReceipt, fixed, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
 
 	const openModal = () => {
@@ -17,15 +17,15 @@ export default function Income({ id, day, type, category, description, value, in
 	};
 
 	return (
-		<li style={{ background: type === '+' ? '#a1f0dc' : '#f1a1a8' }}>
+		<li style={{ background: '#a1f0dc' }}>
 			<div className="transaction">
 				<div className="transaction__info">
 					<div className="transaction__info-group">
-						<span className="transaction__info-category">{category}</span>
-						<span className="transaction__info-description">Dia de recebimento: {description} * {true ? 'fixa' : ''}</span>
+						<span className="transaction__info-category">{accountName}</span>
+						<span className="transaction__info-description">Dia de recebimento: {dayOfReceipt} * {fixed ? 'fixa' : ''}</span>
 					</div>
 					<span className="transaction__info-value">
-						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)}
+						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)}
 					</span>
 				</div>
 				<div className="transaction__actions">

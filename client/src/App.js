@@ -30,11 +30,10 @@ export default function App() {
 	const [ period, setPeriod ] = useState(currPeriod);
 	const [ disabledPrev, setDisabledPrev ] = useState(false);
 	const [ disabledNext, setDisabledNext ] = useState(false);
+	const [ savings, setSavings ] = useState([]);
 	const [ incomes, setIncomes ] = useState([]);
 	const [ expenses, setExpenses ] = useState([]);
 	const [ isLoaded, setIsLoaded ] = useState(false);
-	const [ income, setIncome ] = useState(0);
-	const [ expense, setExpense ] = useState(0);
 	const [ modalIsOpen, setIsOpen ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
 
@@ -51,26 +50,20 @@ export default function App() {
 			setIsLoaded(false);
 			fetchData();
 		},
-		[ period, submited,  ]
+		[ period, submited ]
 	);
 
 	const handleSubmit = async (data) => {
-		const { id, type, description, category, value, date } = data;
+		const { id, accountName, totalValue } = data;
 		if (!id) {
-			await axios.post(`${base_url}/api/transaction`, {
-				type,
-				description,
-				category,
-				value: parseFloat(value),
-				date
+			await axios.post(`${base_url}/savings`, {
+				accountName,
+				totalValue: parseFloat(totalValue),
 			});
 		} else {
-			await axios.put(`${base_url}/api/transaction/${id}`, {
-				type,
-				description,
-				category,
-				value: parseFloat(value),
-				date
+			await axios.put(`${base_url}/savings/${id}`, {
+				accountName,
+				totalValue: parseFloat(totalValue),
 			});
 		}
 		setIsOpen(false);
@@ -78,22 +71,27 @@ export default function App() {
 	};
 
 	const handleDelete = async (id) => {
-		await axios.delete(`${base_url}/api/transaction/${id}`);
+		await axios.delete(`${base_url}/savings/${id}`);
 		setSubmited(submited ? false : true);
 	};
 
 	const fetchData = async () => {
+		const year = period.split('-')[0];
+		const month = period.split('-')[1];
 		try {
-			const result = await axios.get(`${base_url}/api/transaction?period=${period}`);
+			const result = await axios.get(`${base_url}/control-records?month=${month}&year=${year}`, {
+				headers: {
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NWQ0YTFmYS0yMzM5LTQzNTMtYWY4MS1kOGVkZDQ1MTgyYjciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4MTcxODA5LCJleHAiOjE2NTgyNTgyMDl9.73HpifPlF-OYPBO9Oigy-7-ModVBHsBxmzg4hV-3hlk'
+				}
+			});
 			let json = result.data;
 
-			const { incomeValue, expenseValue } = calcResume(json);
-			setIncome(incomeValue);
-			setExpense(expenseValue);
-			setExpenses(json);
-			setIncomes(json);
+			setSavings(json.savings);
+			setExpenses(json.expenses);
+			setIncomes(json.incomes);
 			setIsLoaded(true);
 		} catch (err) {
+			setSavings([]);
 			setExpenses([]);
 			setIncomes([]);
 			setIsLoaded(true);
@@ -142,7 +140,7 @@ export default function App() {
 				disabledPrev={disabledPrev}
 			/>
 
-			<Resume transactions={expenses.length} income={income} expense={expense} balance={income - expense} />
+			<Resume transactions={expenses.length} />
 			
 			<div className="actions">
 				<Button text={'+ Novo Lançamento'} handleClick={openModal} />
@@ -154,7 +152,7 @@ export default function App() {
 					<Loading type="spinningBubbles" color="#26a69a" />
 				</div>
 			) : (
-				<Transactions incomes={incomes} expenses={expenses} onSubmit={handleSubmit} onDelete={handleDelete} />
+				<Transactions savings={savings} incomes={incomes} expenses={expenses} onSubmit={handleSubmit} onDelete={handleDelete} />
 			)}
 		</div>
 	);
