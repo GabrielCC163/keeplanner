@@ -6,7 +6,6 @@ import { base_url } from './config';
 import PeriodFilter from './components/PeriodFilter';
 import Resume from './components/Resume';
 import Button from './components/Button';
-import InputField from './components/InputField';
 import Transactions from './components/Transactions';
 
 import moment from 'moment';
@@ -36,7 +35,6 @@ export default function App() {
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ income, setIncome ] = useState(0);
 	const [ expense, setExpense ] = useState(0);
-	const [ filter, setFilter ] = useState('');
 	const [ modalIsOpen, setIsOpen ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
 
@@ -53,7 +51,7 @@ export default function App() {
 			setIsLoaded(false);
 			fetchData();
 		},
-		[ period, filter, submited,  ]
+		[ period, submited,  ]
 	);
 
 	const handleSubmit = async (data) => {
@@ -86,7 +84,7 @@ export default function App() {
 
 	const fetchData = async () => {
 		try {
-			const result = await axios.get(`${base_url}/api/transaction?period=${period}&filter=${filter}`);
+			const result = await axios.get(`${base_url}/api/transaction?period=${period}`);
 			let json = result.data;
 
 			const { incomeValue, expenseValue } = calcResume(json);
@@ -130,10 +128,6 @@ export default function App() {
 		handleChangePeriod(null, newPeriod);
 	};
 
-	const handleChangeFilter = (event) => {
-		setFilter(event.target.value);
-	};
-
 	return (
 		<div className="container">
 			<div className="center">
@@ -152,8 +146,6 @@ export default function App() {
 			
 			<div className="actions">
 				<Button text={'+ Novo Lançamento'} handleClick={openModal} />
-				<InputField placeholder="Filtro" value={filter} handleChange={handleChangeFilter} />
-
 				<ModalReact isOpen={modalIsOpen} onRequestClose={closeModal} edicao={false} onSubmit={handleSubmit} />
 			</div>
 
