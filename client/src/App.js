@@ -20,6 +20,8 @@ const calcResume = (records) => {
 	let totalSavingsValue = 0;
 	let totalInstallmentsValue = 0;
 	let totalAvailableMonthValue = 0;
+	let totalIncomeValue = 0;
+	let totalExpenseValue = 0;
 	if (records?.savings) {
 		totalSavingsValue = records.savings.reduce((acc, item) => {
 			return item.totalValue + acc;
@@ -32,19 +34,20 @@ const calcResume = (records) => {
 	}
 
 	if (records?.incomes) {
-		totalAvailableMonthValue = records.incomes.reduce((acc, item) => {
+		totalIncomeValue = records.incomes.reduce((acc, item) => {
 			return item.totalValue + acc;
 		}, 0);
-
-		if (records?.expenses) {
-			const totalExpenses = records.expenses.reduce((acc, item) => {
-				return item.totalValue + acc;
-			}, 0);
-			totalAvailableMonthValue -= totalExpenses;
-		}
+		totalAvailableMonthValue = totalIncomeValue;
 	}
 
-	return { totalSavingsValue, totalInstallmentsValue, totalAvailableMonthValue };
+	if (records?.expenses) {
+		totalExpenseValue = records.expenses.reduce((acc, item) => {
+			return item.totalValue + acc;
+		}, 0);
+		totalAvailableMonthValue -= totalExpenseValue;
+	}
+
+	return { totalSavingsValue, totalInstallmentsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue };
 };
 
 export default function App() {
@@ -53,6 +56,8 @@ export default function App() {
 	const [ disabledNext, setDisabledNext ] = useState(false);
 	
 	const [ totalSaving, setTotalSaving ] = useState(0);
+	const [ totalIncome, setTotalIncome ] = useState(0);
+	const [ totalExpense, setTotalExpense ] = useState(0);
 	const [ totalInstallment, setTotalInstallment ] = useState(0);
 	const [ totalAvailableMonth, setTotalAvailableMonth ] = useState(0);
 
@@ -108,18 +113,24 @@ export default function App() {
 		try {
 			const result = await axios.get(`${base_url}/control-records?month=${month}&year=${year}`, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYTFmZDdiMS05NmM1LTRiMjUtYmNkNi1mMjRjMzdkYWYzODIiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4MzU0NzU3LCJleHAiOjE2NTg0NDExNTd9.w_MGBrY9PS00PTXMmbhtir4OHE6ZQBF4qBl_p503S_0'
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0OTMyZGY5ZC01ZGM0LTRlYmEtOTBjYi01ZWE0MTBhOWM1OWUiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NDQ0NDM0LCJleHAiOjE2NTg1MzA4MzR9.6F13zwkrZ_TUZWQU-hHxfuzb70JSW42BK8ZCjPsl-is'
 				}
 			});
 			let json = result.data;
 
-			const {totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue} = calcResume(json);
+			const { totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue } = calcResume(json);
 			setTotalSaving(totalSavingsValue);
 			setTotalInstallment(totalInstallmentsValue)
 			setTotalAvailableMonth(totalAvailableMonthValue);
+			
 			setSavings(json.savings);
+			
 			setExpenses(json.expenses);
+			setTotalExpense(totalExpenseValue);
+			
 			setIncomes(json.incomes);
+			setTotalIncome(totalIncomeValue);
+			
 			setInstallmentCategories(json.installmentCategories);
 			setIsLoaded(true);
 		} catch (err) {
@@ -189,9 +200,11 @@ export default function App() {
 			) : (
 				<>
 					<Transactions 
-						savings={savings} 
+						savings={savings}
 						incomes={incomes} 
-						expenses={expenses} 
+						totalIncome={totalIncome} 
+						expenses={expenses}
+						totalExpense={totalExpense}
 						installmentCategories={installmentCategories} 
 						onSubmit={handleSubmit} 
 						onDelete={handleDelete} 

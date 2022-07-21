@@ -129,6 +129,13 @@ h3 {
   border-radius: 4px;
 }
 
+.incomes_title,
+.expenses_title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .actions {
   display: flex;
   align-items: center;
