@@ -11,28 +11,55 @@ import Transactions from './components/Transactions';
 import moment from 'moment';
 import axios from 'axios';
 import Loading from './tools/Loading';
+import Installments from './components/Installments';
 
 const currPeriod = moment().lang('pt-br').format('YYYY-MM');
 const currYear = parseInt(moment().format('YYYY'));
 
 const calcResume = (records) => {
-	const incomeValue = records.filter(({ type }) => type === '+').reduce((acc, item) => {
-		return item.value + acc;
-	}, 0);
-	const expenseValue = records.filter(({ type }) => type === '-').reduce((acc, item) => {
-		return item.value + acc;
-	}, 0);
+	let totalSavingsValue = 0;
+	let totalInstallmentsValue = 0;
+	let totalAvailableMonthValue = 0;
+	if (records?.savings) {
+		totalSavingsValue = records.savings.reduce((acc, item) => {
+			return item.totalValue + acc;
+		}, 0);
+	}
+	if (records?.installments) {
+		totalInstallmentsValue = records.installments.reduce((acc, item) => {
+			return item.totalValue + acc;
+		}, 0);
+	}
 
-	return { incomeValue, expenseValue };
+	if (records?.incomes) {
+		totalAvailableMonthValue = records.incomes.reduce((acc, item) => {
+			return item.totalValue + acc;
+		}, 0);
+
+		if (records?.expenses) {
+			const totalExpenses = records.expenses.reduce((acc, item) => {
+				return item.totalValue + acc;
+			}, 0);
+			totalAvailableMonthValue -= totalExpenses;
+		}
+	}
+
+	return { totalSavingsValue, totalInstallmentsValue, totalAvailableMonthValue };
 };
 
 export default function App() {
 	const [ period, setPeriod ] = useState(currPeriod);
 	const [ disabledPrev, setDisabledPrev ] = useState(false);
 	const [ disabledNext, setDisabledNext ] = useState(false);
+	
+	const [ totalSaving, setTotalSaving ] = useState(0);
+	const [ totalInstallment, setTotalInstallment ] = useState(0);
+	const [ totalAvailableMonth, setTotalAvailableMonth ] = useState(0);
+
 	const [ savings, setSavings ] = useState([]);
 	const [ incomes, setIncomes ] = useState([]);
 	const [ expenses, setExpenses ] = useState([]);
+	const [ installmentCategories, setInstallmentCategories ] = useState([]);
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ modalIsOpen, setIsOpen ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
@@ -81,20 +108,28 @@ export default function App() {
 		try {
 			const result = await axios.get(`${base_url}/control-records?month=${month}&year=${year}`, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NWQ0YTFmYS0yMzM5LTQzNTMtYWY4MS1kOGVkZDQ1MTgyYjciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4MTcxODA5LCJleHAiOjE2NTgyNTgyMDl9.73HpifPlF-OYPBO9Oigy-7-ModVBHsBxmzg4hV-3hlk'
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYTFmZDdiMS05NmM1LTRiMjUtYmNkNi1mMjRjMzdkYWYzODIiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4MzU0NzU3LCJleHAiOjE2NTg0NDExNTd9.w_MGBrY9PS00PTXMmbhtir4OHE6ZQBF4qBl_p503S_0'
 				}
 			});
 			let json = result.data;
 
+			const {totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue} = calcResume(json);
+			setTotalSaving(totalSavingsValue);
+			setTotalInstallment(totalInstallmentsValue)
+			setTotalAvailableMonth(totalAvailableMonthValue);
 			setSavings(json.savings);
 			setExpenses(json.expenses);
 			setIncomes(json.incomes);
+			setInstallmentCategories(json.installmentCategories);
 			setIsLoaded(true);
 		} catch (err) {
 			setSavings([]);
 			setExpenses([]);
 			setIncomes([]);
 			setIsLoaded(true);
+			setTotalSaving(0);
+			setTotalInstallment(0);
+			setInstallmentCategories([]);
 			console.log(err);
 		}
 	};
@@ -140,7 +175,7 @@ export default function App() {
 				disabledPrev={disabledPrev}
 			/>
 
-			<Resume transactions={expenses.length} />
+			<Resume totalSaving={totalSaving} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />
 			
 			<div className="actions">
 				<Button text={'+ Novo Lançamento'} handleClick={openModal} />
@@ -152,7 +187,17 @@ export default function App() {
 					<Loading type="spinningBubbles" color="#26a69a" />
 				</div>
 			) : (
-				<Transactions savings={savings} incomes={incomes} expenses={expenses} onSubmit={handleSubmit} onDelete={handleDelete} />
+				<>
+					<Transactions 
+						savings={savings} 
+						incomes={incomes} 
+						expenses={expenses} 
+						installmentCategories={installmentCategories} 
+						onSubmit={handleSubmit} 
+						onDelete={handleDelete} 
+					/>
+					<Installments installmentCategories={installmentCategories} />
+				</>
 			)}
 		</div>
 	);

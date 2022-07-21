@@ -1,33 +1,30 @@
 import React from 'react';
 
-export default function Resume({ transactions, income, expense, balance }) {
+export default function Resume({ totalSaving, totalInstallment, totalAvailableMonth }) {
 	return (
 		<div className="resume">
-			<span>
-				<strong>Lançamentos:</strong> {transactions}
-			</span>
-			<span>
-				<strong>
-					Receita:{' '}
+			<span className='resume__item'>
+				<strong>Valor poupado:{' '}
 					<span style={{ color: '#16a085', fontWeight: 'bold' }}>
-						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(income)}
+						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaving)}
 					</span>
 				</strong>
 			</span>
-			<span>
+
+			<span className='resume__item'>
 				<strong>
-					Despesas:{' '}
-					<span style={{ color: '#c0392b', fontWeight: 'bold' }}>
-						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(expense)}
+					Total disponível para o mês:{' '}
+					<span style={{ color: '#0645b7', fontWeight: 'bold' }}>
+						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalAvailableMonth)}
 					</span>
 				</strong>
 			</span>
-			<span>
+
+			<span className='resume__item'>
 				<strong>
-					Saldo:
-					<span style={{ color: balance < 0 ? '#c0392b' : '#16a085', fontWeight: 'bold' }}>
-						{' '}
-						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)}
+					Valor total em parcelas:{' '}
+					<span style={{ color: '#f1a1a8', fontWeight: 'bold' }}>
+						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalInstallment)}
 					</span>
 				</strong>
 			</span>
