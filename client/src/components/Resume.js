@@ -1,12 +1,12 @@
 import React from 'react';
 
-export default function Resume({ totalSaving, totalInstallment, totalAvailableMonth }) {
+export default function Resume({ balance, totalInstallment, totalAvailableMonth }) {
 	return (
 		<div className="resume">
 			<span className='resume__item'>
-				<strong>Valor poupado:{' '}
+				<strong>Saldo:{' '}
 					<span style={{ color: '#16a085', fontWeight: 'bold' }}>
-						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaving)}
+						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)}
 					</span>
 				</strong>
 			</span>

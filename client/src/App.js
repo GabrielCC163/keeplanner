@@ -22,10 +22,12 @@ const calcResume = (records) => {
 	let totalAvailableMonthValue = 0;
 	let totalIncomeValue = 0;
 	let totalExpenseValue = 0;
+	let balanceValue = 0;
 	if (records?.savings) {
 		totalSavingsValue = records.savings.reduce((acc, item) => {
 			return item.totalValue + acc;
 		}, 0);
+		balanceValue = totalSavingsValue;
 	}
 	if (records?.installments) {
 		totalInstallmentsValue = records.installments.reduce((acc, item) => {
@@ -47,7 +49,9 @@ const calcResume = (records) => {
 		totalAvailableMonthValue -= totalExpenseValue;
 	}
 
-	return { totalSavingsValue, totalInstallmentsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue };
+	balanceValue += totalAvailableMonthValue;
+
+	return { balanceValue, totalSavingsValue, totalInstallmentsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue };
 };
 
 export default function App() {
@@ -55,6 +59,7 @@ export default function App() {
 	const [ disabledPrev, setDisabledPrev ] = useState(false);
 	const [ disabledNext, setDisabledNext ] = useState(false);
 	
+	const [ balance, setBalance ] = useState(0);
 	const [ totalSaving, setTotalSaving ] = useState(0);
 	const [ totalIncome, setTotalIncome ] = useState(0);
 	const [ totalExpense, setTotalExpense ] = useState(0);
@@ -118,7 +123,9 @@ export default function App() {
 			});
 			let json = result.data;
 
-			const { totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue } = calcResume(json);
+			const { balanceValue, totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue } = calcResume(json);
+			setBalance(balanceValue)
+
 			setTotalSaving(totalSavingsValue);
 			setTotalInstallment(totalInstallmentsValue)
 			setTotalAvailableMonth(totalAvailableMonthValue);
@@ -186,7 +193,7 @@ export default function App() {
 				disabledPrev={disabledPrev}
 			/>
 
-			<Resume totalSaving={totalSaving} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />
+			<Resume balance={balance} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />
 			
 			<div className="actions">
 				<Button text={'+ Novo Lançamento'} handleClick={openModal} />
@@ -201,6 +208,7 @@ export default function App() {
 				<>
 					<Transactions 
 						savings={savings}
+						totalSaving={totalSaving}
 						incomes={incomes} 
 						totalIncome={totalIncome} 
 						expenses={expenses}

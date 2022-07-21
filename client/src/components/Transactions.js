@@ -3,11 +3,14 @@ import Income from './Income';
 import Saving from './Saving';
 import Expense from './Expense';
 
-export default function Transactions({ savings, incomes, totalIncome, expenses, totalExpense, handleEdition, handleDelete, onSubmit, onDelete }) {
+export default function Transactions({ savings, totalSaving, incomes, totalIncome, expenses, totalExpense, handleEdition, handleDelete, onSubmit, onDelete }) {
 	return (
 		<div className="section_transactions">
 			<ul>
-				<h3>Valores em poupanças</h3>
+				<div className='expenses_title'>
+					<span>Poupanças</span>
+					<span style={{textAlign: 'rigth'}}>Total: {totalSaving}</span>
+				</div>
 				{savings.map(({ id, accountName, totalValue }, index) => {
 					return (
 						<Saving
@@ -45,7 +48,7 @@ export default function Transactions({ savings, incomes, totalIncome, expenses, 
 				})}
 			</ul>
 			<ul>
-			<div className='expenses_title'>
+				<div className='expenses_title'>
 					<span>Despesas</span>
 					<span style={{textAlign: 'rigth'}}>Total: {totalExpense}</span>
 				</div>
