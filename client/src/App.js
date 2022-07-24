@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ModalReact from './components/ModalReact';
+import SavingModal from './components/SavingModal';
 
 import { base_url } from './config';
 
@@ -62,6 +62,8 @@ export default function App() {
 	const [ disabledNext, setDisabledNext ] = useState(false);
 	const [ enableInsert, setEnableInsert ] = useState(true);
 	
+	const [ controlRecordId, setControlRecordId ] = useState('');
+
 	const [ balance, setBalance ] = useState(0);
 	const [ totalSaving, setTotalSaving ] = useState(0);
 	const [ totalIncome, setTotalIncome ] = useState(0);
@@ -74,16 +76,16 @@ export default function App() {
 	const [ expenses, setExpenses ] = useState([]);
 	const [ installmentCategories, setInstallmentCategories ] = useState([]);
 	const [ isLoaded, setIsLoaded ] = useState(false);
-	const [ modalIsOpen, setIsOpen ] = useState(false);
+	const [ savingModalIsOpen, setSavingModalIsOpen ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
 
-	// const openModal = () => {
-	// 	setIsOpen(true);
-	// };
+	const openSavingModal = () => {
+		setSavingModalIsOpen(true);
+	};
 
-	// const closeModal = () => {
-	// 	setIsOpen(false);
-	// };
+	const closeSavingModal = () => {
+		setSavingModalIsOpen(false);
+	};
 
 	useEffect(
 		() => {
@@ -94,25 +96,39 @@ export default function App() {
 		[ period, submited ]
 	);
 
-	const handleSubmit = async (data) => {
+	const handleSavingSubmit = async (data) => {
 		const { id, accountName, totalValue } = data;
+		console.log(data)
 		if (!id) {
 			await axios.post(`${base_url}/savings`, {
 				accountName,
-				totalValue: parseFloat(totalValue),
+				totalValue: +totalValue,
+				controlRecordId,
+			}, {
+				headers: {
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+				}
 			});
 		} else {
-			await axios.put(`${base_url}/savings/${id}`, {
+			await axios.patch(`${base_url}/savings/${id}`, {
 				accountName,
-				totalValue: parseFloat(totalValue),
+				totalValue: +totalValue,
+			}, {
+				headers: {
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+				}
 			});
 		}
-		setIsOpen(false);
+		setSavingModalIsOpen(false);
 		setSubmited(submited ? false : true);
 	};
 
 	const handleDelete = async (id) => {
-		await axios.delete(`${base_url}/savings/${id}`);
+		await axios.delete(`${base_url}/savings/${id}`, {
+			headers: {
+				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+			}
+		});
 		setSubmited(submited ? false : true);
 	};
 
@@ -146,6 +162,7 @@ export default function App() {
 			});
 			setEnableInsert(false);
 			let json = result.data;
+			setControlRecordId(json.id);
 
 			const { balanceValue, totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue } = calcResume(json);
 			setBalance(balanceValue);
@@ -220,11 +237,12 @@ export default function App() {
 			/>
 
 			<Resume balance={balance} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />
+
+			<SavingModal isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />	
 			
 			{enableInsert && (
 				<div className="actions">
 					<Button text={`Iniciar cadastro de registros para ${moment(`${period}-01`).format('MMMM/YYYY')}`} handleClick={createControlRecord} />
-					{/* <ModalReact isOpen={modalIsOpen} onRequestClose={closeModal} edicao={false} onSubmit={handleSubmit} /> */}
 				</div>
 			)}
 
@@ -243,10 +261,11 @@ export default function App() {
 						totalIncome={totalIncome} 
 						expenses={expenses}
 						totalExpense={totalExpense}
-						installmentCategories={installmentCategories} 
-						onSubmit={handleSubmit} 
+						installmentCategories={installmentCategories}
+						openSavingModal={openSavingModal}
+						onSavingSubmit={handleSavingSubmit} 
 						onDelete={handleDelete} 
-						/>
+					/>
 					<Installments installmentCategories={installmentCategories} />
 				</>
 			)}

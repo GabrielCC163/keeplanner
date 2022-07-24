@@ -25,6 +25,24 @@ h3 {
   font-size: 1.6rem;
 }
 
+.radius {
+  border-radius: 50%;
+}
+
+.plus {
+  cursor: pointer;
+  --b: 4px;
+  /* the thickness */
+  width: 40px;
+  /* the size */
+  aspect-ratio: 1;
+  border: 10px solid #26a69a;
+  /* the outer space */
+  background:
+    conic-gradient(from 90deg at var(--b) var(--b), #26a69a 90deg, #fff 0) calc(100% + var(--b)/2) calc(100% + var(--b)/2)/ calc(50% + var(--b)) calc(50% + var(--b));
+  display: inline-block;
+}
+
 .loading {
   display: flex;
   justify-content: center;

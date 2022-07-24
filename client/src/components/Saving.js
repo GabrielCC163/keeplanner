@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ModalReact from './ModalReact';
+import SavingModal from './SavingModal';
 
 export default function Saving({ id, accountName, totalValue, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
@@ -36,7 +36,7 @@ export default function Saving({ id, accountName, totalValue, index, onSubmit, o
 					</span>
 				</div>
 			</div>
-			<ModalReact isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
+			<SavingModal isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
 		</li>
 	);
 }

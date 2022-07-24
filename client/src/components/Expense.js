@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ModalReact from './ModalReact';
+import ModalReact from './SavingModal';
 
 export default function Expense({ id, description, totalValue, dueDay, dueMonth, status, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);

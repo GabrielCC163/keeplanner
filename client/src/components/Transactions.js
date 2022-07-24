@@ -3,13 +3,15 @@ import Income from './Income';
 import Saving from './Saving';
 import Expense from './Expense';
 
-export default function Transactions({ savings, totalSaving, incomes, totalIncome, expenses, totalExpense, handleEdition, handleDelete, onSubmit, onDelete }) {
+export default function Transactions({ savings, totalSaving, incomes, totalIncome, expenses, totalExpense, openSavingModal, handleEdition, handleDelete, onSavingSubmit, onDelete }) {
 	return (
 		<div className="section_transactions">
 			<ul>
 				<div className='expenses_title'>
 					<span>Poupanças</span>
-					<span style={{textAlign: 'rigth'}}>Total: {totalSaving}</span>
+					<span style={{textAlign: 'rigth'}}>Total:{' '}
+					{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaving)}
+					</span>
 				</div>
 				{savings.map(({ id, accountName, totalValue }, index) => {
 					return (
@@ -20,15 +22,20 @@ export default function Transactions({ savings, totalSaving, incomes, totalIncom
 							totalValue={totalValue}
 							handleEdition={handleEdition}
 							handleDelete={handleDelete}
-							onSubmit={onSubmit}
+							onSubmit={onSavingSubmit}
 							onDelete={onDelete}
 						/>
 					);
 				})}
+				<div className='plus radius' onClick={openSavingModal}></div>
+
+				<hr style={{margin: '20px 0'}} />
 
 				<div className='incomes_title'>
 					<span>Receitas</span>
-					<span style={{textAlign: 'rigth'}}>Total: {totalIncome}</span>
+					<span style={{textAlign: 'rigth'}}>Total:{' '}
+					{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalIncome)}
+					</span>
 				</div>
 				{incomes.map(({ id, accountName, totalValue, dayOfReceipt, fixed }, index) => {
 					return (
@@ -41,16 +48,19 @@ export default function Transactions({ savings, totalSaving, incomes, totalIncom
 							fixed={fixed}
 							handleEdition={handleEdition}
 							handleDelete={handleDelete}
-							onSubmit={onSubmit}
+							onSubmit={onSavingSubmit}
 							onDelete={onDelete}
 						/>
 					);
 				})}
+				<div className='plus radius'></div>
 			</ul>
 			<ul>
 				<div className='expenses_title'>
 					<span>Despesas</span>
-					<span style={{textAlign: 'rigth'}}>Total: {totalExpense}</span>
+					<span style={{textAlign: 'rigth'}}>Total:{' '}
+					{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalExpense)}
+					</span>
 				</div>
 				{expenses.map(({ id, description, totalValue, dueDay, dueMonth, status }, index) => {
 					return (
@@ -64,11 +74,12 @@ export default function Transactions({ savings, totalSaving, incomes, totalIncom
 							status={status}
 							handleEdition={handleEdition}
 							handleDelete={handleDelete}
-							onSubmit={onSubmit}
+							onSubmit={onSavingSubmit}
 							onDelete={onDelete}
 						/>
 					);
 				})}
+				<div className='plus radius'></div>
 			</ul>
 		</div>
 	);
