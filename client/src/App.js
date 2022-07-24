@@ -9,11 +9,12 @@ import Button from './components/Button';
 import Transactions from './components/Transactions';
 
 import moment from 'moment';
+import 'moment/locale/pt-br';
 import axios from 'axios';
 import Loading from './tools/Loading';
 import Installments from './components/Installments';
 
-const currPeriod = moment().lang('pt-br').format('YYYY-MM');
+const currPeriod = moment().format('YYYY-MM');
 const currYear = parseInt(moment().format('YYYY'));
 
 const calcResume = (records) => {
@@ -23,6 +24,7 @@ const calcResume = (records) => {
 	let totalIncomeValue = 0;
 	let totalExpenseValue = 0;
 	let balanceValue = 0;
+
 	if (records?.savings) {
 		totalSavingsValue = records.savings.reduce((acc, item) => {
 			return item.totalValue + acc;
@@ -58,6 +60,7 @@ export default function App() {
 	const [ period, setPeriod ] = useState(currPeriod);
 	const [ disabledPrev, setDisabledPrev ] = useState(false);
 	const [ disabledNext, setDisabledNext ] = useState(false);
+	const [ enableInsert, setEnableInsert ] = useState(true);
 	
 	const [ balance, setBalance ] = useState(0);
 	const [ totalSaving, setTotalSaving ] = useState(0);
@@ -74,17 +77,18 @@ export default function App() {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
 
-	const openModal = () => {
-		setIsOpen(true);
-	};
+	// const openModal = () => {
+	// 	setIsOpen(true);
+	// };
 
-	const closeModal = () => {
-		setIsOpen(false);
-	};
+	// const closeModal = () => {
+	// 	setIsOpen(false);
+	// };
 
 	useEffect(
 		() => {
 			setIsLoaded(false);
+			setEnableInsert(false);
 			fetchData();
 		},
 		[ period, submited ]
@@ -112,22 +116,42 @@ export default function App() {
 		setSubmited(submited ? false : true);
 	};
 
+	const createControlRecord = async () => {
+		const year = period.split('-')[0];
+		const month = period.split('-')[1];
+		const userId = '28dcd9e9-4606-46b5-bd7b-428338b370d7';
+
+		await axios.post(`${base_url}/control-records`, {
+			year,
+			month,
+			userId
+		}, {
+			headers: {
+				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+			}
+		});
+
+		setEnableInsert(false);
+	}
+
 	const fetchData = async () => {
 		const year = period.split('-')[0];
 		const month = period.split('-')[1];
+
 		try {
 			const result = await axios.get(`${base_url}/control-records?month=${month}&year=${year}`, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0OTMyZGY5ZC01ZGM0LTRlYmEtOTBjYi01ZWE0MTBhOWM1OWUiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NDQ0NDM0LCJleHAiOjE2NTg1MzA4MzR9.6F13zwkrZ_TUZWQU-hHxfuzb70JSW42BK8ZCjPsl-is'
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
 				}
 			});
+			setEnableInsert(false);
 			let json = result.data;
 
 			const { balanceValue, totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue } = calcResume(json);
-			setBalance(balanceValue)
+			setBalance(balanceValue);
 
 			setTotalSaving(totalSavingsValue);
-			setTotalInstallment(totalInstallmentsValue)
+			setTotalInstallment(totalInstallmentsValue);
 			setTotalAvailableMonth(totalAvailableMonthValue);
 			
 			setSavings(json.savings);
@@ -141,6 +165,8 @@ export default function App() {
 			setInstallmentCategories(json.installmentCategories);
 			setIsLoaded(true);
 		} catch (err) {
+			setEnableInsert(true);
+
 			setSavings([]);
 			setExpenses([]);
 			setIncomes([]);
@@ -169,10 +195,10 @@ export default function App() {
 		let newPeriod = '';
 
 		if (action === 'prev') {
-			newPeriod = moment(`${period}-01`).add(-1, 'months').lang('pt-br').format('YYYY-MM');
+			newPeriod = moment(`${period}-01`).add(-1, 'months').format('YYYY-MM');
 			setDisabledNext(false);
 		} else {
-			newPeriod = moment(`${period}-01`).add(1, 'months').lang('pt-br').format('YYYY-MM');
+			newPeriod = moment(`${period}-01`).add(1, 'months').format('YYYY-MM');
 			setDisabledPrev(false);
 		}
 
@@ -195,16 +221,20 @@ export default function App() {
 
 			<Resume balance={balance} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />
 			
-			<div className="actions">
-				<Button text={'+ Novo Lançamento'} handleClick={openModal} />
-				<ModalReact isOpen={modalIsOpen} onRequestClose={closeModal} edicao={false} onSubmit={handleSubmit} />
-			</div>
+			{enableInsert && (
+				<div className="actions">
+					<Button text={`Iniciar cadastro de registros para ${moment(`${period}-01`).format('MMMM/YYYY')}`} handleClick={createControlRecord} />
+					{/* <ModalReact isOpen={modalIsOpen} onRequestClose={closeModal} edicao={false} onSubmit={handleSubmit} /> */}
+				</div>
+			)}
 
-			{!isLoaded ? (
+			{!enableInsert && !isLoaded && (
 				<div className="loading">
 					<Loading type="spinningBubbles" color="#26a69a" />
 				</div>
-			) : (
+			)}	
+			
+			{!enableInsert && isLoaded && (
 				<>
 					<Transactions 
 						savings={savings}
@@ -216,7 +246,7 @@ export default function App() {
 						installmentCategories={installmentCategories} 
 						onSubmit={handleSubmit} 
 						onDelete={handleDelete} 
-					/>
+						/>
 					<Installments installmentCategories={installmentCategories} />
 				</>
 			)}

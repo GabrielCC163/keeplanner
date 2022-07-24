@@ -43,6 +43,7 @@ h3 {
 }
 
 .period-filter select {
+  text-align: center;
   width: 150px;
   font-family: 'Fira Code Retida', Consolas, monospace, Arial;
 }
@@ -139,8 +140,8 @@ h3 {
 .actions {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  margin: 30px 0;
+  justify-content: center;
+  margin: 40px 0;
 }
 
 .actions__input-field {
