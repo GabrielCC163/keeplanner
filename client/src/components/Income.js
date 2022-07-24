@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ModalReact from './SavingModal';
+import IncomeModal from './IncomeModal';
 
 export default function Income({ id, accountName, totalValue, dayOfReceipt, fixed, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
@@ -22,7 +22,11 @@ export default function Income({ id, accountName, totalValue, dayOfReceipt, fixe
 				<div className="transaction__info">
 					<div className="transaction__info-group">
 						<span className="transaction__info-category">{accountName}</span>
-						<span className="transaction__info-description">Dia de recebimento: {dayOfReceipt} * {fixed ? 'fixa' : ''}</span>
+						<div>
+							{dayOfReceipt && (<span className="transaction__info-description">Dia: {dayOfReceipt}</span>)}
+							{fixed && dayOfReceipt && (<span> | Fixo</span>)}
+							{fixed && !dayOfReceipt && (<span>Fixo</span>)}
+						</div>
 					</div>
 					<span className="transaction__info-value">
 						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)}
@@ -37,7 +41,7 @@ export default function Income({ id, accountName, totalValue, dayOfReceipt, fixe
 					</span>
 				</div>
 			</div>
-			<ModalReact isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
+			<IncomeModal isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
 		</li>
 	);
 }

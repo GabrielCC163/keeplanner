@@ -24,9 +24,11 @@ const customStyles = {
 	}
 };
 
-export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
+export default function IncomeModal({ isOpen, onRequestClose, id, onSubmit }) {
 	const [ accountName, setAccountName ] = useState('');
 	const [ totalValue, setTotalValue ] = useState('');
+	const [ dayOfReceipt, setDayOfReceipt ] = useState(-1);
+	const [ fixed, setFixed ] = useState(false);
 
 	const handleChangeAccountName = (event) => {
 		setAccountName(event.target.value);
@@ -36,16 +38,31 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 		setTotalValue(event.target.value);
 	};
 
+	const handleChangeDayOfReceipt = (event) => {
+		setDayOfReceipt(event.target.value);
+	};
+
+	const handleChangeFixed = (event) => {
+		setFixed(event.target.value === 'true' ? true : false);
+	};
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		onSubmit({ id, accountName, totalValue });
+		const payload = {id, accountName, totalValue, fixed};
+		if (dayOfReceipt >= 1) {
+			payload['dayOfReceipt'] = dayOfReceipt
+		}
+
+		onSubmit(payload);
 		setAccountName('');
 		setTotalValue('');
+		setDayOfReceipt(-1);
+		setFixed(false);
 	};
 
 	const afterOpenModal = async () => {
 		if (id) {
-			const tr = await axios.get(`${base_url}/savings/${id}`, {
+			const tr = await axios.get(`${base_url}/incomes/${id}`, {
 				headers: {
 					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
 				}
@@ -53,15 +70,21 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 			const json = tr.data;
 			setAccountName(json.accountName);
 			setTotalValue(json.totalValue);
+			setDayOfReceipt(json.dayOfReceipt);
+			setFixed(json.fixed);
 		} else {
 			setAccountName('');
 			setTotalValue('');
+			setDayOfReceipt(-1);
+			setFixed(false);
 		}
 	};
 
 	const afterCloseModal = () => {
 		setAccountName('');
 		setTotalValue('');
+		setDayOfReceipt(-1);
+		setFixed(false);
 		onRequestClose();
 	}
 
@@ -80,7 +103,7 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 					className="modal_container"
 				>
 					<h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>
-						{id ? 'Edição' : 'Inclusão'} de registro de poupança
+						{id ? 'Edição' : 'Inclusão'} de registro de receita
 					</h3>
 					<button className="waves-effect waves-light btn red darken-4" onClick={onRequestClose}>
 						X
@@ -130,6 +153,37 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 							<label htmlFor="inputValue" className="active">
 								Valor Total:
 							</label>
+						</div>
+
+						<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+							<div style={{ marginRight: '10px', width: '100%' }} className="input-field">
+								<input
+									type="number"
+									id="inputDayOfReceipt"
+									min="0"
+									max="31"
+									step="1"
+									value={dayOfReceipt >= 1 ? dayOfReceipt : ''}
+									onChange={handleChangeDayOfReceipt}
+								/>
+								<label htmlFor="inputDayOfReceipt" className="active">
+									Dia de recebimento:
+								</label>
+							</div>
+
+							<div style={{width: '100%'}} className="input-field">
+								<select id="inputFixed" className="browser-default" onChange={handleChangeFixed} value={fixed}>
+									<option key={1} value={false}>
+										Não
+									</option>
+									<option key={2} value={true}>
+										Sim
+									</option>
+								</select>
+								<label htmlFor="inputFixed" className="active">
+									Recebimento fixo:
+								</label>
+							</div>
 						</div>
 					</div>
 					<input className="waves-effect waves-light btn" type="submit" value="Salvar" disabled={false} />

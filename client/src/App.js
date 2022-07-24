@@ -13,6 +13,7 @@ import 'moment/locale/pt-br';
 import axios from 'axios';
 import Loading from './tools/Loading';
 import Installments from './components/Installments';
+import IncomeModal from './components/IncomeModal';
 
 const currPeriod = moment().format('YYYY-MM');
 const currYear = parseInt(moment().format('YYYY'));
@@ -75,8 +76,11 @@ export default function App() {
 	const [ incomes, setIncomes ] = useState([]);
 	const [ expenses, setExpenses ] = useState([]);
 	const [ installmentCategories, setInstallmentCategories ] = useState([]);
-	const [ isLoaded, setIsLoaded ] = useState(false);
+	
 	const [ savingModalIsOpen, setSavingModalIsOpen ] = useState(false);
+	const [ incomeModalIsOpen, setIncomeModalIsOpen ] = useState(false);
+	
+	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
 
 	const openSavingModal = () => {
@@ -85,6 +89,14 @@ export default function App() {
 
 	const closeSavingModal = () => {
 		setSavingModalIsOpen(false);
+	};
+
+	const openIncomeModal = () => {
+		setIncomeModalIsOpen(true);
+	};
+
+	const closeIncomeModal = () => {
+		setIncomeModalIsOpen(false);
 	};
 
 	useEffect(
@@ -98,7 +110,6 @@ export default function App() {
 
 	const handleSavingSubmit = async (data) => {
 		const { id, accountName, totalValue } = data;
-		console.log(data)
 		if (!id) {
 			await axios.post(`${base_url}/savings`, {
 				accountName,
@@ -123,8 +134,47 @@ export default function App() {
 		setSubmited(submited ? false : true);
 	};
 
-	const handleDelete = async (id) => {
+	const handleIncomeSubmit = async (data) => {
+		const { id, accountName, totalValue, dayOfReceipt, fixed } = data;
+		if (!id) {
+			await axios.post(`${base_url}/incomes`, {
+				accountName,
+				totalValue: +totalValue,
+				dayOfReceipt,
+				fixed,
+				controlRecordId,
+			}, {
+				headers: {
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+				}
+			});
+		} else {
+			await axios.patch(`${base_url}/incomes/${id}`, {
+				accountName,
+				totalValue: +totalValue,
+				dayOfReceipt: dayOfReceipt ? dayOfReceipt : '',
+				fixed
+			}, {
+				headers: {
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+				}
+			});
+		}
+		setIncomeModalIsOpen(false);
+		setSubmited(submited ? false : true);
+	};
+
+	const handleSavingDelete = async (id) => {
 		await axios.delete(`${base_url}/savings/${id}`, {
+			headers: {
+				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+			}
+		});
+		setSubmited(submited ? false : true);
+	};
+
+	const handleIncomeDelete = async (id) => {
+		await axios.delete(`${base_url}/incomes/${id}`, {
 			headers: {
 				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
 			}
@@ -167,30 +217,28 @@ export default function App() {
 			const { balanceValue, totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue } = calcResume(json);
 			setBalance(balanceValue);
 
-			setTotalSaving(totalSavingsValue);
 			setTotalInstallment(totalInstallmentsValue);
 			setTotalAvailableMonth(totalAvailableMonthValue);
 			
 			setSavings(json.savings);
-			
-			setExpenses(json.expenses);
-			setTotalExpense(totalExpenseValue);
+			setTotalSaving(totalSavingsValue);
 			
 			setIncomes(json.incomes);
 			setTotalIncome(totalIncomeValue);
+			
+			setExpenses(json.expenses);
+			setTotalExpense(totalExpenseValue);
 			
 			setInstallmentCategories(json.installmentCategories);
 			setIsLoaded(true);
 		} catch (err) {
 			setEnableInsert(true);
 
-			setSavings([]);
-			setExpenses([]);
-			setIncomes([]);
+			// setSavings([]);
+			// setExpenses([]);
+			// setIncomes([]);
+
 			setIsLoaded(true);
-			setTotalSaving(0);
-			setTotalInstallment(0);
-			setInstallmentCategories([]);
 			console.log(err);
 		}
 	};
@@ -238,7 +286,8 @@ export default function App() {
 
 			<Resume balance={balance} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />
 
-			<SavingModal isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />	
+			<SavingModal isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />
+			<IncomeModal isOpen={incomeModalIsOpen} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />	
 			
 			{enableInsert && (
 				<div className="actions">
@@ -261,10 +310,16 @@ export default function App() {
 						totalIncome={totalIncome} 
 						expenses={expenses}
 						totalExpense={totalExpense}
+						
 						installmentCategories={installmentCategories}
+						
 						openSavingModal={openSavingModal}
-						onSavingSubmit={handleSavingSubmit} 
-						onDelete={handleDelete} 
+						onSavingSubmit={handleSavingSubmit}
+						onSavingDelete={handleSavingDelete} 
+
+						openIncomeModal={openIncomeModal}
+						onIncomeSubmit={handleIncomeSubmit}
+						onIncomeDelete={handleIncomeDelete} 
 					/>
 					<Installments installmentCategories={installmentCategories} />
 				</>

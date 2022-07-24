@@ -3,7 +3,22 @@ import Income from './Income';
 import Saving from './Saving';
 import Expense from './Expense';
 
-export default function Transactions({ savings, totalSaving, incomes, totalIncome, expenses, totalExpense, openSavingModal, handleEdition, handleDelete, onSavingSubmit, onDelete }) {
+export default function Transactions({ 
+	savings, 
+	totalSaving, 
+	incomes, 
+	totalIncome, 
+	expenses, 
+	totalExpense,
+
+	openSavingModal, 
+	onSavingSubmit,
+	onSavingDelete, 
+	
+	openIncomeModal,
+	onIncomeSubmit,
+	onIncomeDelete
+}) {
 	return (
 		<div className="section_transactions">
 			<ul>
@@ -20,10 +35,8 @@ export default function Transactions({ savings, totalSaving, incomes, totalIncom
 							id={id}
 							accountName={accountName}
 							totalValue={totalValue}
-							handleEdition={handleEdition}
-							handleDelete={handleDelete}
 							onSubmit={onSavingSubmit}
-							onDelete={onDelete}
+							onDelete={onSavingDelete}
 						/>
 					);
 				})}
@@ -46,15 +59,14 @@ export default function Transactions({ savings, totalSaving, incomes, totalIncom
 							totalValue={totalValue}
 							dayOfReceipt={dayOfReceipt}
 							fixed={fixed}
-							handleEdition={handleEdition}
-							handleDelete={handleDelete}
-							onSubmit={onSavingSubmit}
-							onDelete={onDelete}
+							onSubmit={onIncomeSubmit}
+							onDelete={onIncomeDelete}
 						/>
 					);
 				})}
-				<div className='plus radius'></div>
+				<div className='plus radius' onClick={openIncomeModal}></div>
 			</ul>
+
 			<ul>
 				<div className='expenses_title'>
 					<span>Despesas</span>
@@ -72,10 +84,8 @@ export default function Transactions({ savings, totalSaving, incomes, totalIncom
 							dueDay={dueDay}
 							dueMonth={dueMonth}
 							status={status}
-							handleEdition={handleEdition}
-							handleDelete={handleDelete}
 							onSubmit={onSavingSubmit}
-							onDelete={onDelete}
+							onDelete={onSavingDelete}
 						/>
 					);
 				})}
