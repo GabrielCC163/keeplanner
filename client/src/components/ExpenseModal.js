@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import { base_url } from '../config';
+import moment from 'moment';
+import 'moment/locale/pt-br';
 
 const customStyles = {
 	content: {
@@ -24,67 +26,78 @@ const customStyles = {
 	}
 };
 
-export default function IncomeModal({ isOpen, onRequestClose, id, onSubmit }) {
-	const [ accountName, setAccountName ] = useState('');
-	const [ totalValue, setTotalValue ] = useState('');
-	const [ dayOfReceipt, setDayOfReceipt ] = useState(-1);
-	const [ fixed, setFixed ] = useState(false);
+const nextMonth = moment().add(1, 'month').format('M');
 
-	const handleChangeAccountName = (event) => {
-		setAccountName(event.target.value);
+export default function ExpenseModal({ isOpen, onRequestClose, id, onSubmit }) {
+	const [ description, setDescription ] = useState('');
+	const [ totalValue, setTotalValue ] = useState('');
+	const [ dueDay, setDueDay ] = useState(-1);
+	const [ dueMonth, setDueMonth ] = useState(+nextMonth);
+	const [ status, setStatus ] = useState('AP');
+
+	const handleChangeDescription = (event) => {
+		setDescription(event.target.value);
 	};
 	
 	const handleChangeTotalValue = (event) => {
 		setTotalValue(+event.target.value);
 	};
 
-	const handleChangeDayOfReceipt = (event) => {
-		setDayOfReceipt(event.target.value ? +event.target.value : '');
+	const handleChangeDueDay = (event) => {
+		setDueDay(event.target.value ? +event.target.value : '');
 	};
 
-	const handleChangeFixed = (event) => {
-		setFixed(event.target.value === 'true' ? true : false);
+	const handleChangeDueMonth = (event) => {
+		setDueMonth(+event.target.value);
+	};
+
+	const handleChangeStatus = (event) => {
+		setStatus(event.target.value);
 	};
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		const payload = {id, accountName, totalValue, fixed};
-		if (dayOfReceipt >= 1) {
-			payload['dayOfReceipt'] = dayOfReceipt
+		const payload = {id, description, totalValue, dueDay, dueMonth, status};
+		if (dueDay >= 1) {
+			payload['dueDay'] = dueDay
 		}
 
 		onSubmit(payload);
-		setAccountName('');
+		setDescription('');
 		setTotalValue('');
-		setDayOfReceipt(-1);
-		setFixed(false);
+		setDueDay(-1);
+		setDueMonth('');
+		setStatus('AP');
 	};
 
 	const afterOpenModal = async () => {
 		if (id) {
-			const tr = await axios.get(`${base_url}/incomes/${id}`, {
+			const tr = await axios.get(`${base_url}/expenses/${id}`, {
 				headers: {
 					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 				}
 			});
 			const json = tr.data;
-			setAccountName(json.accountName);
+			setDescription(json.description);
 			setTotalValue(json.totalValue);
-			setDayOfReceipt(json.dayOfReceipt);
-			setFixed(json.fixed);
+			setDueDay(json.dueDay);
+			setDueMonth(json.dueMonth);
+			setStatus(json.status);
 		} else {
-			setAccountName('');
+			setDescription('');
 			setTotalValue('');
-			setDayOfReceipt(-1);
-			setFixed(false);
+			setDueDay(-1);
+			setDueMonth(nextMonth);
+			setStatus('AP');
 		}
 	};
 
 	const afterCloseModal = () => {
-		setAccountName('');
+		setDescription('');
 		setTotalValue('');
-		setDayOfReceipt(-1);
-		setFixed(false);
+		setDueDay(-1);
+		setDueMonth('');
+		setStatus('AP');
 		onRequestClose();
 	}
 
@@ -103,7 +116,7 @@ export default function IncomeModal({ isOpen, onRequestClose, id, onSubmit }) {
 					className="modal_container"
 				>
 					<h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>
-						{id ? 'Edição' : 'Inclusão'} de registro de receita
+						{id ? 'Edição' : 'Inclusão'} de registro de despesa
 					</h3>
 					<button className="waves-effect waves-light btn red darken-4" onClick={onRequestClose}>
 						X
@@ -119,16 +132,17 @@ export default function IncomeModal({ isOpen, onRequestClose, id, onSubmit }) {
 							marginBottom: '10px'
 						}}
 					>
+						
 						<div className="input-field">
 							<input
 								type="text"
-								id="inputAccoutName"
-								value={accountName}
+								id="inputDescription"
+								value={description}
 								required
-								onChange={handleChangeAccountName}
+								onChange={handleChangeDescription}
 							/>
-							<label htmlFor="inputAccoutName" className="active">
-								Nome da Conta Bancária ou Banco*:
+							<label htmlFor="inputDescription" className="active">
+								Descrição*:
 							</label>
 						</div>
 						<div className="input-field">
@@ -150,32 +164,48 @@ export default function IncomeModal({ isOpen, onRequestClose, id, onSubmit }) {
 							<div style={{ marginRight: '10px', width: '100%' }} className="input-field">
 								<input
 									type="number"
-									id="inputDayOfReceipt"
+									id="inputDueDay"
 									min="0"
 									max="31"
 									step="1"
-									value={dayOfReceipt >= 1 ? dayOfReceipt : ''}
-									onChange={handleChangeDayOfReceipt}
+									value={dueDay >= 1 ? dueDay : ''}
+									onChange={handleChangeDueDay}
 								/>
-								<label htmlFor="inputDayOfReceipt" className="active">
-									Dia de recebimento:
+								<label htmlFor="inputDueDay" className="active">
+									Dia de vencimento:
 								</label>
 							</div>
 
-							<div style={{width: '100%'}} className="input-field">
-								<select id="inputFixed" className="browser-default" onChange={handleChangeFixed} value={fixed}>
-									<option key={1} value={false}>
-										Não
-									</option>
-									<option key={2} value={true}>
-										Sim
-									</option>
-								</select>
-								<label htmlFor="inputFixed" className="active">
-									Recebimento fixo*:
+							<div style={{ marginRight: '10px', width: '100%' }} className="input-field">
+								<input
+									type="number"
+									id="inputDueMonth"
+									min="1"
+									max="12"
+									step="1"
+									value={dueMonth}
+									onChange={handleChangeDueMonth}
+								/>
+								<label htmlFor="inputDueMonth" className="active">
+									Mês de vencimento*:
 								</label>
 							</div>
 						</div>
+
+						<div style={{width: '100%'}} className="input-field">
+							<select id="inputStatus" className="browser-default" onChange={handleChangeStatus} value={status}>
+								<option key={1} value={'AP'}>
+									Aguardando Pagamento (AP)
+								</option>
+								<option key={2} value={'PA'}>
+									Pago (PA)
+								</option>
+							</select>
+							<label style={{ marginTop: '-4px' }} htmlFor="inputStatus" className="active">
+								Status*:
+							</label>
+						</div>
+
 					</div>
 					<input className="waves-effect waves-light btn" type="submit" value="Salvar" disabled={false} />
 				</form>

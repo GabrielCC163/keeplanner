@@ -14,6 +14,7 @@ import axios from 'axios';
 import Loading from './tools/Loading';
 import Installments from './components/Installments';
 import IncomeModal from './components/IncomeModal';
+import ExpenseModal from './components/ExpenseModal';
 
 const currPeriod = moment().format('YYYY-MM');
 const currYear = parseInt(moment().format('YYYY'));
@@ -79,6 +80,7 @@ export default function App() {
 	
 	const [ savingModalIsOpen, setSavingModalIsOpen ] = useState(false);
 	const [ incomeModalIsOpen, setIncomeModalIsOpen ] = useState(false);
+	const [ expenseModalIsOpen, setExpenseModalIsOpen ] = useState(false);
 	
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
@@ -99,6 +101,14 @@ export default function App() {
 		setIncomeModalIsOpen(false);
 	};
 
+	const openExpenseModal = () => {
+		setExpenseModalIsOpen(true);
+	};
+
+	const closeExpenseModal = () => {
+		setExpenseModalIsOpen(false);
+	};
+
 	useEffect(
 		() => {
 			setIsLoaded(false);
@@ -117,7 +127,7 @@ export default function App() {
 				controlRecordId,
 			}, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 				}
 			});
 		} else {
@@ -126,11 +136,20 @@ export default function App() {
 				totalValue: +totalValue,
 			}, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 				}
 			});
 		}
 		setSavingModalIsOpen(false);
+		setSubmited(submited ? false : true);
+	};
+
+	const handleSavingDelete = async (id) => {
+		await axios.delete(`${base_url}/savings/${id}`, {
+			headers: {
+				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
+			}
+		});
 		setSubmited(submited ? false : true);
 	};
 
@@ -140,23 +159,23 @@ export default function App() {
 			await axios.post(`${base_url}/incomes`, {
 				accountName,
 				totalValue: +totalValue,
-				dayOfReceipt,
+				dayOfReceipt: dayOfReceipt ? +dayOfReceipt : null,
 				fixed,
 				controlRecordId,
 			}, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 				}
 			});
 		} else {
 			await axios.patch(`${base_url}/incomes/${id}`, {
 				accountName,
 				totalValue: +totalValue,
-				dayOfReceipt: dayOfReceipt ? dayOfReceipt : '',
+				dayOfReceipt: dayOfReceipt ? dayOfReceipt : null,
 				fixed
 			}, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 				}
 			});
 		}
@@ -164,19 +183,51 @@ export default function App() {
 		setSubmited(submited ? false : true);
 	};
 
-	const handleSavingDelete = async (id) => {
-		await axios.delete(`${base_url}/savings/${id}`, {
+	const handleIncomeDelete = async (id) => {
+		await axios.delete(`${base_url}/incomes/${id}`, {
 			headers: {
-				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 			}
 		});
 		setSubmited(submited ? false : true);
 	};
 
-	const handleIncomeDelete = async (id) => {
-		await axios.delete(`${base_url}/incomes/${id}`, {
+	const handleExpenseSubmit = async (data) => {
+		const { id, description, totalValue, dueDay, dueMonth, status } = data;
+		if (!id) {
+			await axios.post(`${base_url}/expenses`, {
+				description,
+				totalValue: +totalValue,
+				dueDay: dueDay ? +dueDay : '',
+				dueMonth: +dueMonth,
+				status,
+				controlRecordId,
+			}, {
+				headers: {
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
+				}
+			});
+		} else {
+			await axios.patch(`${base_url}/expenses/${id}`, {
+				description,
+				totalValue: +totalValue,
+				dueDay: dueDay ? +dueDay : null,
+				dueMonth: +dueMonth,
+				status
+			}, {
+				headers: {
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
+				}
+			});
+		}
+		setExpenseModalIsOpen(false);
+		setSubmited(submited ? false : true);
+	};
+
+	const handleExpenseDelete = async (id) => {
+		await axios.delete(`${base_url}/expenses/${id}`, {
 			headers: {
-				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 			}
 		});
 		setSubmited(submited ? false : true);
@@ -185,7 +236,7 @@ export default function App() {
 	const createControlRecord = async () => {
 		const year = period.split('-')[0];
 		const month = period.split('-')[1];
-		const userId = '28dcd9e9-4606-46b5-bd7b-428338b370d7';
+		const userId = '8bde9a13-4223-45d3-97f0-492111999a11';
 
 		await axios.post(`${base_url}/control-records`, {
 			year,
@@ -193,10 +244,11 @@ export default function App() {
 			userId
 		}, {
 			headers: {
-				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+				Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 			}
 		});
 
+		setSubmited(submited ? false : true);
 		setEnableInsert(false);
 	}
 
@@ -207,7 +259,7 @@ export default function App() {
 		try {
 			const result = await axios.get(`${base_url}/control-records?month=${month}&year=${year}`, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 				}
 			});
 			setEnableInsert(false);
@@ -287,7 +339,8 @@ export default function App() {
 			<Resume balance={balance} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />
 
 			<SavingModal isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />
-			<IncomeModal isOpen={incomeModalIsOpen} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />	
+			<IncomeModal isOpen={incomeModalIsOpen} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />
+			<ExpenseModal isOpen={expenseModalIsOpen} onRequestClose={closeExpenseModal} edicao={false} onSubmit={handleExpenseSubmit} />	
 			
 			{enableInsert && (
 				<div className="actions">
@@ -320,6 +373,10 @@ export default function App() {
 						openIncomeModal={openIncomeModal}
 						onIncomeSubmit={handleIncomeSubmit}
 						onIncomeDelete={handleIncomeDelete} 
+
+						openExpenseModal={openExpenseModal}
+						onExpenseSubmit={handleExpenseSubmit}
+						onExpenseDelete={handleExpenseDelete}
 					/>
 					<Installments installmentCategories={installmentCategories} />
 				</>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ModalReact from './SavingModal';
+import ExpenseModal from './ExpenseModal';
 
 export default function Expense({ id, description, totalValue, dueDay, dueMonth, status, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
@@ -22,7 +22,12 @@ export default function Expense({ id, description, totalValue, dueDay, dueMonth,
 				<div className="transaction__info">
 					<div className="transaction__info-group">
 						<span className="transaction__info-category">{description}</span>
-						<span className="transaction__info-description">{dueDay} {dueMonth} - {status}</span>
+						<div>
+							<span className="transaction__info-description">Vencimento: </span>
+							{dueDay && (<span className="transaction__info-description">{dueDay} de {dueMonth}</span>)}
+							{!dueDay && (<span className="transaction__info-description">{dueMonth}</span>)}
+							<span className="transaction__info-description"> | {status}</span>
+						</div>
 					</div>
 					<span className="transaction__info-value">
 						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)}
@@ -37,7 +42,7 @@ export default function Expense({ id, description, totalValue, dueDay, dueMonth,
 					</span>
 				</div>
 			</div>
-			<ModalReact isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
+			<ExpenseModal isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
 		</li>
 	);
 }

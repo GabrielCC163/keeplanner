@@ -17,7 +17,11 @@ export default function Transactions({
 	
 	openIncomeModal,
 	onIncomeSubmit,
-	onIncomeDelete
+	onIncomeDelete,
+
+	openExpenseModal,
+	onExpenseSubmit,
+	onExpenseDelete
 }) {
 	return (
 		<div className="section_transactions">
@@ -84,12 +88,12 @@ export default function Transactions({
 							dueDay={dueDay}
 							dueMonth={dueMonth}
 							status={status}
-							onSubmit={onSavingSubmit}
-							onDelete={onSavingDelete}
+							onSubmit={onExpenseSubmit}
+							onDelete={onExpenseDelete}
 						/>
 					);
 				})}
-				<div className='plus radius'></div>
+				<div className='plus radius' onClick={openExpenseModal}></div>
 			</ul>
 		</div>
 	);

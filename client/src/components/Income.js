@@ -24,8 +24,8 @@ export default function Income({ id, accountName, totalValue, dayOfReceipt, fixe
 						<span className="transaction__info-category">{accountName}</span>
 						<div>
 							{dayOfReceipt && (<span className="transaction__info-description">Dia: {dayOfReceipt}</span>)}
-							{fixed && dayOfReceipt && (<span> | Fixo</span>)}
-							{fixed && !dayOfReceipt && (<span>Fixo</span>)}
+							{fixed && dayOfReceipt && (<span className="transaction__info-description"> | Fixo</span>)}
+							{fixed && !dayOfReceipt && (<span className="transaction__info-description">Fixo</span>)}
 						</div>
 					</div>
 					<span className="transaction__info-value">

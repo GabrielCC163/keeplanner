@@ -33,7 +33,7 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 	};
 	
 	const handleChangeTotalValue = (event) => {
-		setTotalValue(event.target.value);
+		setTotalValue(+event.target.value);
 	};
 
 	const handleSubmit = (event) => {
@@ -47,7 +47,7 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 		if (id) {
 			const tr = await axios.get(`${base_url}/savings/${id}`, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOGRjZDllOS00NjA2LTQ2YjUtYmQ3Yi00MjgzMzhiMzcwZDciLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU4NjgyMDg4LCJleHAiOjE2NTg3Njg0ODh9.BAxmZcaKUPWgLTQEZV7z5NatvIFtAqOqhVLQK_l-IDs'
+					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
 				}
 			});
 			const json = tr.data;
@@ -96,15 +96,6 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 							marginBottom: '10px'
 						}}
 					>
-						<div
-							style={{
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								marginBottom: '30px'
-							}}
-						>
-						</div>
 						<div className="input-field">
 							<input
 								type="text"
@@ -114,7 +105,7 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 								onChange={handleChangeAccountName}
 							/>
 							<label htmlFor="inputAccoutName" className="active">
-								Nome da Conta Bancária ou Banco:
+								Nome da Conta Bancária ou Banco*:
 							</label>
 						</div>
 						<div className="input-field">
@@ -128,7 +119,7 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 								onChange={handleChangeTotalValue}
 							/>
 							<label htmlFor="inputValue" className="active">
-								Valor Total:
+								Valor Total*:
 							</label>
 						</div>
 					</div>
