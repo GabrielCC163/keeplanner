@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ExpenseModal from './ExpenseModal';
 
-export default function Expense({ id, description, totalValue, dueDay, dueMonth, status, index, onSubmit, onDelete }) {
+export default function Expense({ id, token, description, totalValue, dueDay, dueMonth, status, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
 
 	const openModal = () => {
@@ -42,7 +42,7 @@ export default function Expense({ id, description, totalValue, dueDay, dueMonth,
 					</span>
 				</div>
 			</div>
-			<ExpenseModal isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
+			<ExpenseModal token={token} isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
 		</li>
 	);
 }

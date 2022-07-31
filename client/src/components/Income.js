@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import IncomeModal from './IncomeModal';
 
-export default function Income({ id, accountName, totalValue, dayOfReceipt, fixed, index, onSubmit, onDelete }) {
+export default function Income({ id, token, accountName, totalValue, dayOfReceipt, fixed, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
 
 	const openModal = () => {
@@ -41,7 +41,7 @@ export default function Income({ id, accountName, totalValue, dayOfReceipt, fixe
 					</span>
 				</div>
 			</div>
-			<IncomeModal isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
+			<IncomeModal token={token} isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
 		</li>
 	);
 }

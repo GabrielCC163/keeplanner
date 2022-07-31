@@ -2,14 +2,19 @@ import React from 'react';
 import Income from './Income';
 import Saving from './Saving';
 import Expense from './Expense';
+import InstallmentCategory from './InstallmentCategory';
 
 export default function Transactions({ 
+	token,
+
 	savings, 
 	totalSaving, 
 	incomes, 
 	totalIncome, 
 	expenses, 
 	totalExpense,
+
+	installmentCategories,
 
 	openSavingModal, 
 	onSavingSubmit,
@@ -21,7 +26,11 @@ export default function Transactions({
 
 	openExpenseModal,
 	onExpenseSubmit,
-	onExpenseDelete
+	onExpenseDelete,
+
+	openInstallmentCategoryModal,
+	onInstallmentCategorySubmit,
+	onInstallmentCategoryDelete,
 }) {
 	return (
 		<div className="section_transactions">
@@ -29,7 +38,7 @@ export default function Transactions({
 				<div className='expenses_title'>
 					<span>Poupanças</span>
 					<span style={{textAlign: 'rigth'}}>Total:{' '}
-					{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaving)}
+						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaving)}
 					</span>
 				</div>
 				{savings.map(({ id, accountName, totalValue }, index) => {
@@ -37,6 +46,7 @@ export default function Transactions({
 						<Saving
 							key={id}
 							id={id}
+							token={token}
 							accountName={accountName}
 							totalValue={totalValue}
 							onSubmit={onSavingSubmit}
@@ -51,7 +61,7 @@ export default function Transactions({
 				<div className='incomes_title'>
 					<span>Receitas</span>
 					<span style={{textAlign: 'rigth'}}>Total:{' '}
-					{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalIncome)}
+						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalIncome)}
 					</span>
 				</div>
 				{incomes.map(({ id, accountName, totalValue, dayOfReceipt, fixed }, index) => {
@@ -59,6 +69,7 @@ export default function Transactions({
 						<Income
 							key={id}
 							id={id}
+							token={token}
 							accountName={accountName}
 							totalValue={totalValue}
 							dayOfReceipt={dayOfReceipt}
@@ -75,7 +86,7 @@ export default function Transactions({
 				<div className='expenses_title'>
 					<span>Despesas</span>
 					<span style={{textAlign: 'rigth'}}>Total:{' '}
-					{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalExpense)}
+						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalExpense)}
 					</span>
 				</div>
 				{expenses.map(({ id, description, totalValue, dueDay, dueMonth, status }, index) => {
@@ -83,6 +94,7 @@ export default function Transactions({
 						<Expense
 							key={id}
 							id={id}
+							token={token}
 							description={description}
 							totalValue={totalValue}
 							dueDay={dueDay}
@@ -94,6 +106,29 @@ export default function Transactions({
 					);
 				})}
 				<div className='plus radius' onClick={openExpenseModal}></div>
+			</ul>
+
+			<ul>
+				<div className='installments_title'>
+					<span>Parcelas</span>
+				</div>
+
+				{installmentCategories.map(({ id, description, dueDay, dueMonth, installments }, index) => {
+					return (
+						<InstallmentCategory
+							key={id}
+							id={id}
+							token={token}
+							description={description}
+							dueDay={dueDay}
+							dueMonth={dueMonth}
+							installments={installments}
+							onSubmit={onInstallmentCategorySubmit}
+							onDelete={onInstallmentCategoryDelete}
+						/>
+					);
+				})}
+				<div className='plus radius' onClick={openInstallmentCategoryModal}></div>
 			</ul>
 		</div>
 	);

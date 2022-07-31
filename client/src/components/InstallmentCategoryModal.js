@@ -28,21 +28,15 @@ const customStyles = {
 
 const nextMonth = moment().add(1, 'month').format('M');
 
-export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubmit }) {
+export default function InstallmentCategoryModal({ token, isOpen, onRequestClose, id, onSubmit }) {
 	const [ description, setDescription ] = useState('');
-	const [ totalValue, setTotalValue ] = useState('');
 	const [ dueDay, setDueDay ] = useState(-1);
 	const [ dueMonth, setDueMonth ] = useState(+nextMonth);
-	const [ status, setStatus ] = useState('AP');
 
 	const handleChangeDescription = (event) => {
 		setDescription(event.target.value);
 	};
 	
-	const handleChangeTotalValue = (event) => {
-		setTotalValue(event.target.value ? +event.target.value : '');
-	};
-
 	const handleChangeDueDay = (event) => {
 		setDueDay(event.target.value ? +event.target.value : '');
 	};
@@ -51,53 +45,41 @@ export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubm
 		setDueMonth(event.target.value ? +event.target.value : '');
 	};
 
-	const handleChangeStatus = (event) => {
-		setStatus(event.target.value);
-	};
-
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		const payload = {id, description, totalValue, dueDay, dueMonth, status};
+		const payload = {id, description, dueDay, dueMonth };
 		if (dueDay >= 1) {
 			payload['dueDay'] = dueDay
 		}
 
 		onSubmit(payload);
 		setDescription('');
-		setTotalValue('');
 		setDueDay(-1);
 		setDueMonth('');
-		setStatus('AP');
 	};
 
 	const afterOpenModal = async () => {
 		if (id) {
-			const tr = await axios.get(`${base_url}/expenses/${id}`, {
+			const tr = await axios.get(`${base_url}/installment-categories/${id}`, {
 				headers: {
 					Authorization: token
 				}
 			});
 			const json = tr.data;
 			setDescription(json.description);
-			setTotalValue(json.totalValue);
 			setDueDay(json.dueDay);
 			setDueMonth(json.dueMonth);
-			setStatus(json.status);
 		} else {
 			setDescription('');
-			setTotalValue('');
 			setDueDay(-1);
 			setDueMonth(nextMonth);
-			setStatus('AP');
 		}
 	};
 
 	const afterCloseModal = () => {
 		setDescription('');
-		setTotalValue('');
 		setDueDay(-1);
 		setDueMonth('');
-		setStatus('AP');
 		onRequestClose();
 	}
 
@@ -116,7 +98,7 @@ export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubm
 					className="modal_container"
 				>
 					<h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>
-						{id ? 'Edição' : 'Inclusão'} de registro de despesa
+						{id ? 'Edição' : 'Inclusão'} de categoria de parcela
 					</h3>
 					<button className="waves-effect waves-light btn red darken-4" onClick={onRequestClose}>
 						X
@@ -143,20 +125,6 @@ export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubm
 							/>
 							<label htmlFor="inputDescription" className="active">
 								Descrição*:
-							</label>
-						</div>
-						<div className="input-field">
-							<input
-								type="number"
-								id="inputValue"
-								min="0"
-								step="0.01"
-								value={totalValue}
-								required
-								onChange={handleChangeTotalValue}
-							/>
-							<label htmlFor="inputValue" className="active">
-								Valor Total*:
 							</label>
 						</div>
 
@@ -190,20 +158,6 @@ export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubm
 									Mês de vencimento*:
 								</label>
 							</div>
-						</div>
-
-						<div style={{width: '100%'}} className="input-field">
-							<select id="inputStatus" className="browser-default" onChange={handleChangeStatus} value={status}>
-								<option key={1} value={'AP'}>
-									Aguardando Pagamento (AP)
-								</option>
-								<option key={2} value={'PA'}>
-									Pago (PA)
-								</option>
-							</select>
-							<label style={{ marginTop: '-4px' }} htmlFor="inputStatus" className="active">
-								Status*:
-							</label>
 						</div>
 
 					</div>

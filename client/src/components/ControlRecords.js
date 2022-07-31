@@ -12,9 +12,9 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 import axios from 'axios';
 import Loading from '../tools/Loading';
-import Installments from './Installments';
 import IncomeModal from './IncomeModal';
 import ExpenseModal from './ExpenseModal';
+import InstallmentCategoryModal from './InstallmentCategoryModal';
 
 const currPeriod = moment().format('YYYY-MM');
 const currYear = parseInt(moment().format('YYYY'));
@@ -81,6 +81,7 @@ export default function ControlRecords({userToken: token}) {
 	const [ savingModalIsOpen, setSavingModalIsOpen ] = useState(false);
 	const [ incomeModalIsOpen, setIncomeModalIsOpen ] = useState(false);
 	const [ expenseModalIsOpen, setExpenseModalIsOpen ] = useState(false);
+	const [ installmentCategoryModalIsOpen, setInstallmentCategoryModalIsOpen ] = useState(false);
 	
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
@@ -107,6 +108,14 @@ export default function ControlRecords({userToken: token}) {
 
 	const closeExpenseModal = () => {
 		setExpenseModalIsOpen(false);
+	};
+
+	const openInstallmentCategoryModal = () => {
+		setInstallmentCategoryModalIsOpen(true);
+	};
+
+	const closeInstallmentCategoryModal = () => {
+		setInstallmentCategoryModalIsOpen(false);
 	};
 
 	useEffect(
@@ -233,6 +242,43 @@ export default function ControlRecords({userToken: token}) {
 		setSubmited(submited ? false : true);
 	};
 
+	const handleInstallmentCategorySubmit = async (data) => {
+		const { id, description, dueDay, dueMonth } = data;
+		if (!id) {
+			await axios.post(`${base_url}/installment-categories`, {
+				description,
+				dueDay: dueDay ? +dueDay : '',
+				dueMonth: +dueMonth,
+				controlRecordId,
+			}, {
+				headers: {
+					Authorization: token
+				}
+			});
+		} else {
+			await axios.patch(`${base_url}/installment-categories/${id}`, {
+				description,
+				dueDay: dueDay ? +dueDay : null,
+				dueMonth: +dueMonth,
+			}, {
+				headers: {
+					Authorization: token
+				}
+			});
+		}
+		setInstallmentCategoryModalIsOpen(false);
+		setSubmited(submited ? false : true);
+	};
+
+	const handleInstallmentCategoryDelete = async (id) => {
+		await axios.delete(`${base_url}/installment-categories/${id}`, {
+			headers: {
+				Authorization: token
+			}
+		});
+		setSubmited(submited ? false : true);
+	};
+
 	const createControlRecord = async () => {
 		const year = period.split('-')[0];
 		const month = period.split('-')[1];
@@ -336,9 +382,10 @@ export default function ControlRecords({userToken: token}) {
 
 			<Resume balance={balance} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />
 
-			<SavingModal isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />
-			<IncomeModal isOpen={incomeModalIsOpen} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />
-			<ExpenseModal isOpen={expenseModalIsOpen} onRequestClose={closeExpenseModal} edicao={false} onSubmit={handleExpenseSubmit} />	
+			<SavingModal token={token} isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />
+			<IncomeModal token={token} isOpen={incomeModalIsOpen} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />
+			<ExpenseModal token={token} isOpen={expenseModalIsOpen} onRequestClose={closeExpenseModal} edicao={false} onSubmit={handleExpenseSubmit} />
+			<InstallmentCategoryModal token={token} isOpen={installmentCategoryModalIsOpen} onRequestClose={closeInstallmentCategoryModal} edicao={false} onSubmit={handleInstallmentCategorySubmit} />	
 			
 			{enableInsert && (
 				<div className="actions">
@@ -355,13 +402,14 @@ export default function ControlRecords({userToken: token}) {
 			{!enableInsert && isLoaded && (
 				<>
 					<Transactions 
+						token={token}
+						
 						savings={savings}
 						totalSaving={totalSaving}
 						incomes={incomes} 
 						totalIncome={totalIncome} 
 						expenses={expenses}
 						totalExpense={totalExpense}
-						
 						installmentCategories={installmentCategories}
 						
 						openSavingModal={openSavingModal}
@@ -375,8 +423,11 @@ export default function ControlRecords({userToken: token}) {
 						openExpenseModal={openExpenseModal}
 						onExpenseSubmit={handleExpenseSubmit}
 						onExpenseDelete={handleExpenseDelete}
+
+						openInstallmentCategoryModal={openInstallmentCategoryModal}
+						onInstallmentCategorySubmit={handleInstallmentCategorySubmit}
+						onInstallmentCategoryDelete={handleInstallmentCategoryDelete}
 					/>
-					<Installments installmentCategories={installmentCategories} />
 				</>
 			)}
 		</div>

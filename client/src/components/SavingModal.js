@@ -24,7 +24,7 @@ const customStyles = {
 	}
 };
 
-export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
+export default function SavingModal({ token, isOpen, onRequestClose, id, onSubmit }) {
 	const [ accountName, setAccountName ] = useState('');
 	const [ totalValue, setTotalValue ] = useState('');
 
@@ -47,7 +47,7 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 		if (id) {
 			const tr = await axios.get(`${base_url}/savings/${id}`, {
 				headers: {
-					Authorization:	'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YmRlOWExMy00MjIzLTQ1ZDMtOTdmMC00OTIxMTE5OTlhMTEiLCJlbWFpbCI6ImdhYnJpZWxAZ21haWwuY29tIiwiaWF0IjoxNjU5MDQ2NTc1LCJleHAiOjE2NTkxMzI5NzV9.Qgp-h62ShCg7-XueHcy1V3TcaIpAcymPiNK_6YOACbI'
+					Authorization: token
 				}
 			});
 			const json = tr.data;

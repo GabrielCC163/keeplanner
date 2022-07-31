@@ -152,7 +152,8 @@ h3 {
 }
 
 .incomes_title,
-.expenses_title {
+.expenses_title,
+.installments_title {
   display: flex;
   justify-content: space-between;
   align-items: center;
