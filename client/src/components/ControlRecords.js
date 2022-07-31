@@ -236,12 +236,10 @@ export default function ControlRecords({userToken: token}) {
 	const createControlRecord = async () => {
 		const year = period.split('-')[0];
 		const month = period.split('-')[1];
-		const userId = '8bde9a13-4223-45d3-97f0-492111999a11';
-
+		
 		await axios.post(`${base_url}/control-records`, {
 			year,
 			month,
-			userId
 		}, {
 			headers: {
 				Authorization: token

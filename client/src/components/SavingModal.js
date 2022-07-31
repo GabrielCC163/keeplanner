@@ -33,7 +33,7 @@ export default function SavingModal({ isOpen, onRequestClose, id, onSubmit }) {
 	};
 	
 	const handleChangeTotalValue = (event) => {
-		setTotalValue(+event.target.value);
+		setTotalValue(event.target.value ? +event.target.value: '');
 	};
 
 	const handleSubmit = (event) => {

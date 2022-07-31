@@ -66,6 +66,9 @@ h3 {
   font-family: 'Fira Code Retida', Consolas, monospace, Arial;
 }
 
+.container {
+  width: 100%;
+}
 
 .section_transactions {
   display: flex;

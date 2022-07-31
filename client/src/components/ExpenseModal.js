@@ -40,7 +40,7 @@ export default function ExpenseModal({ isOpen, onRequestClose, id, onSubmit }) {
 	};
 	
 	const handleChangeTotalValue = (event) => {
-		setTotalValue(+event.target.value);
+		setTotalValue(event.target.value ? +event.target.value : '');
 	};
 
 	const handleChangeDueDay = (event) => {
@@ -48,7 +48,7 @@ export default function ExpenseModal({ isOpen, onRequestClose, id, onSubmit }) {
 	};
 
 	const handleChangeDueMonth = (event) => {
-		setDueMonth(+event.target.value);
+		setDueMonth(event.target.value ? +event.target.value : '');
 	};
 
 	const handleChangeStatus = (event) => {

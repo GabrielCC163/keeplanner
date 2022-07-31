@@ -17,7 +17,7 @@ export default function App() {
 			<button onClick={removeToken}>Logout</button>
 			<BrowserRouter>
 				<Routes>
-					<Route path="/controle-financeiro" element={<ControlRecords userToken={`Bearer ${token}`} />} />
+					<Route path="/" element={<ControlRecords userToken={`Bearer ${token}`} />} />
 				</Routes>
 			</BrowserRouter>
 		</div>
