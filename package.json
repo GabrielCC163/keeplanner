@@ -10,7 +10,8 @@
     "moment": "2.27.0",
     "mongodb": "3.5.9",
     "mongoose": "5.9.19",
-    "normalize-mongoose": "0.0.1"
+    "normalize-mongoose": "0.0.1",
+    "react-router-dom": "6.3.0"
   },
   "devDependencies": {
     "nodemon": "2.0.4"
