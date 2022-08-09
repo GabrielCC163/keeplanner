@@ -1,6 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import 'moment/locale/pt-br';
+import capitalize from '../utils/capitalize';
 
 const currYear = parseInt(moment().format('YYYY'));
 //const currPeriod = moment().lang('pt-br').format('YYYY-MM');
@@ -12,7 +13,7 @@ years.forEach((year) => {
 	while (i <= 12) {
 		const monthNum = i < 10 ? `0${i}` : i;
 		const month = moment(`${year}-${monthNum}-01`).format('MMMM');
-		options.push({ value: `${year}-${monthNum}`, label: `${month}/${year}` });
+		options.push({ value: `${year}-${monthNum}`, label: `${capitalize(month)}/${year}` });
 		i++;
 	}
 });

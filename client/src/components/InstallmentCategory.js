@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import InstallmentCategoryModal from './InstallmentCategoryModal';
+import moment from 'moment';
+import 'moment/locale/pt-br';
+import capitalize from '../utils/capitalize';
+
 
 export default function InstallmentCategory({ id, token, description, dueDay, dueMonth, installments, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
+	dueMonth = capitalize(moment(`2022-${dueMonth}-01`).format('MMMM'));
 
 	const openModal = () => {
 		setIsOpen(true);
@@ -17,7 +22,7 @@ export default function InstallmentCategory({ id, token, description, dueDay, du
 	};
 
 	return (
-		<li style={{ background: '#f1a1a8' }}>
+		<li style={{ background: '#ffbe87' }}>
 			<div className="transaction">
 				<div className="transaction__info">
 					<div className="transaction__info-group">
@@ -30,6 +35,7 @@ export default function InstallmentCategory({ id, token, description, dueDay, du
 					</div>
 				</div>
 				<div className="transaction__actions">
+					<button>Adicionar Parcela</button>
 					<span className="material-icons" onClick={() => openModal()}>
 						edit
 					</span>

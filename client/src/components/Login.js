@@ -25,7 +25,8 @@ export default function Login({ setToken }) {
 
     return(
         <div className="login-wrapper">
-            <h1>Faça seu login, ou crie uma conta.</h1>
+            <h1>Keeplanner</h1>
+            <span>Faça seu login, ou crie uma conta.</span>
             <form onSubmit={handleSubmit}>
                 <label>
                     <p>Usuário</p>

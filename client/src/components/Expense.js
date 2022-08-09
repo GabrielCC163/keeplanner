@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import ExpenseModal from './ExpenseModal';
+import moment from 'moment';
+import 'moment/locale/pt-br';
+import capitalize from '../utils/capitalize';
 
 export default function Expense({ id, token, description, totalValue, dueDay, dueMonth, status, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
+
+	dueMonth = capitalize(moment(`2022-${dueMonth}-01`).format('MMMM'));
 
 	const openModal = () => {
 		setIsOpen(true);

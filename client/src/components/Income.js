@@ -17,7 +17,7 @@ export default function Income({ id, token, accountName, totalValue, dayOfReceip
 	};
 
 	return (
-		<li style={{ background: '#a1f0dc' }}>
+		<li style={{ background: '#58ebc6' }}>
 			<div className="transaction">
 				<div className="transaction__info">
 					<div className="transaction__info-group">
