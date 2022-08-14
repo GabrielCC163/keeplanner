@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import SavingModal from './SavingModal';
+import moment from 'moment';
+import 'moment/locale/pt-br';
+import axios from 'axios';
+import Loading from '../tools/Loading';
 
 import { base_url } from '../config';
+
+import SavingModal from './SavingModal';
+import IncomeModal from './IncomeModal';
+import ExpenseModal from './ExpenseModal';
+import InstallmentCategoryModal from './InstallmentCategoryModal';
 
 import PeriodFilter from './PeriodFilter';
 import Resume from './Resume';
 import Button from './Button';
 import Transactions from './Transactions';
-
-import moment from 'moment';
-import 'moment/locale/pt-br';
-import axios from 'axios';
-import Loading from '../tools/Loading';
-import IncomeModal from './IncomeModal';
-import ExpenseModal from './ExpenseModal';
-import InstallmentCategoryModal from './InstallmentCategoryModal';
 
 const currPeriod = moment().format('YYYY-MM');
 const currYear = parseInt(moment().format('YYYY'));
