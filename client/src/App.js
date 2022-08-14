@@ -13,8 +13,9 @@ export default function App() {
 
 	return (
 		<div className="wrapper">
-			<h1>Keeplanner</h1>
-			<button onClick={removeToken}>Logout</button>
+			<div className='logout'>
+				<button onClick={removeToken}>Sair</button>
+			</div>
 			<BrowserRouter>
 				<Routes>
 					<Route path="/" element={<ControlRecords userToken={`Bearer ${token}`} />} />

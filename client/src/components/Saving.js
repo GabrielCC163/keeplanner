@@ -17,11 +17,11 @@ export default function Saving({ id, token, accountName, totalValue, index, onSu
 	};
 
 	return (
-		<li style={{background: '#419b79'}}>
+		<li style={{background: '#44ffb8'}}>
 			<div className="transaction">
 				<div className="transaction__info">
 					<div className="transaction__info-group">
-						<span className="transaction__info-description">{accountName}</span>
+						<span style={{fontWeight: 500}} className="transaction__info-description">{accountName}</span>
 					</div>
 					<span className="transaction__info-value">
 						{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)}

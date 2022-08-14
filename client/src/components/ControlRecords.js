@@ -279,6 +279,44 @@ export default function ControlRecords({userToken: token}) {
 		setSubmited(submited ? false : true);
 	};
 
+	const handleInstallmentSubmit = async (data) => {
+		const { id, description, value, installment, totalInstallments, installmentCategoryId } = data;
+		if (!id) {
+			await axios.post(`${base_url}/installments`, {
+				description,
+				value,
+				installment,
+				totalInstallments,
+				installmentCategoryId
+			}, {
+				headers: {
+					Authorization: token
+				}
+			});
+		} else {
+			await axios.patch(`${base_url}/installments/${id}`, {
+				description,
+				value,
+				installment,
+				totalInstallments
+			}, {
+				headers: {
+					Authorization: token
+				}
+			});
+		}
+		setSubmited(submited ? false : true);
+	};
+
+	const handleInstallmentDelete = async (id) => {
+		await axios.delete(`${base_url}/installments/${id}`, {
+			headers: {
+				Authorization: token
+			}
+		});
+		setSubmited(submited ? false : true);
+	};
+
 	const createControlRecord = async () => {
 		const year = period.split('-')[0];
 		const month = period.split('-')[1];
@@ -385,7 +423,7 @@ export default function ControlRecords({userToken: token}) {
 			<SavingModal token={token} isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />
 			<IncomeModal token={token} isOpen={incomeModalIsOpen} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />
 			<ExpenseModal token={token} isOpen={expenseModalIsOpen} onRequestClose={closeExpenseModal} edicao={false} onSubmit={handleExpenseSubmit} />
-			<InstallmentCategoryModal token={token} isOpen={installmentCategoryModalIsOpen} onRequestClose={closeInstallmentCategoryModal} edicao={false} onSubmit={handleInstallmentCategorySubmit} />	
+			<InstallmentCategoryModal token={token} isOpen={installmentCategoryModalIsOpen} onRequestClose={closeInstallmentCategoryModal} edicao={false} onSubmit={handleInstallmentCategorySubmit} />
 			
 			{enableInsert && (
 				<div className="actions">
@@ -427,6 +465,9 @@ export default function ControlRecords({userToken: token}) {
 						openInstallmentCategoryModal={openInstallmentCategoryModal}
 						onInstallmentCategorySubmit={handleInstallmentCategorySubmit}
 						onInstallmentCategoryDelete={handleInstallmentCategoryDelete}
+
+						onInstallmentSubmit={handleInstallmentSubmit}
+						onInstallmentDelete={handleInstallmentDelete}
 					/>
 				</>
 			)}

@@ -3,6 +3,7 @@ import Income from './Income';
 import Saving from './Saving';
 import Expense from './Expense';
 import InstallmentCategory from './InstallmentCategory';
+import Installment from './Installment';
 
 export default function Transactions({ 
 	token,
@@ -31,6 +32,9 @@ export default function Transactions({
 	openInstallmentCategoryModal,
 	onInstallmentCategorySubmit,
 	onInstallmentCategoryDelete,
+
+	onInstallmentSubmit,
+	onInstallmentDelete,
 }) {
 	return (
 		<>
@@ -119,18 +123,40 @@ export default function Transactions({
 					</div>
 					{installmentCategories.map(({ id, description, dueDay, dueMonth, installments }, index) => {
 						return (
-							<InstallmentCategory
-								key={id}
-								id={id}
-								token={token}
-								description={description}
-								dueDay={dueDay}
-								dueMonth={dueMonth}
-								installments={installments}
-								onSubmit={onInstallmentCategorySubmit}
-								onDelete={onInstallmentCategoryDelete}
-							/>
-						);
+							<>
+								<InstallmentCategory
+									key={id}
+									id={id}
+									token={token}
+									description={description}
+									dueDay={dueDay}
+									dueMonth={dueMonth}
+									
+									onSubmit={onInstallmentCategorySubmit}
+									onDelete={onInstallmentCategoryDelete}
+
+									onInstallmentSubmit={onInstallmentSubmit}
+								/>
+								<ul className='installments-group'>
+									{installments.map(({id, description, value, installment, totalInstallments }, index) => {
+										return (
+											<Installment 
+												key={id}
+												id={id}
+												token={token}
+												description={description}
+												value={value}
+												installment={installment}
+												totalInstallments={totalInstallments}
+												
+												onSubmit={onInstallmentSubmit}
+												onDelete={onInstallmentDelete}
+											/>
+										)
+									})}
+								</ul>
+							</>
+						);	
 					})}
 					<div className='plus radius installment_category' onClick={openInstallmentCategoryModal}></div>
 				</ul>
