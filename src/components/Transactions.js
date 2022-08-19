@@ -1,9 +1,9 @@
 import React from 'react';
 import Income from './Income';
-import Saving from './Saving';
 import Expense from './Expense';
 import InstallmentCategory from './InstallmentCategory';
 import Installment from './Installment';
+import Saving from './Savings/Saving';
 
 export default function Transactions({ 
 	token,
@@ -16,6 +16,7 @@ export default function Transactions({
 	totalExpense,
 
 	installmentCategories,
+	installments,
 
 	openSavingModal, 
 	onSavingSubmit,
@@ -121,12 +122,12 @@ export default function Transactions({
 					<div className='installments_title'>
 						<span>Parcelas</span>
 					</div>
-					{installmentCategories.map(({ id, description, dueDay, dueMonth, installments }, index) => {
+					{installmentCategories.map(({ id: categoryId, description, dueDay, dueMonth }, index) => {
 						return (
 							<>
 								<InstallmentCategory
-									key={id}
-									id={id}
+									key={categoryId}
+									id={categoryId}
 									token={token}
 									description={description}
 									dueDay={dueDay}
@@ -138,7 +139,7 @@ export default function Transactions({
 									onInstallmentSubmit={onInstallmentSubmit}
 								/>
 								<ul className='installments-group'>
-									{installments.map(({id, description, value, installment, totalInstallments }, index) => {
+									{installments.filter(i => i.installmentCategoryId === categoryId).map(({id, description, value, installment, totalInstallments }, index) => {
 										return (
 											<Installment 
 												key={id}

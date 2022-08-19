@@ -55,6 +55,7 @@ export default function InstallmentModal({ token, isOpen, onRequestClose, id, on
 		setValue('');
 		setInstallment('');
 		setTotalInstallments('');
+		onRequestClose();
 	};
 
 	const afterOpenModal = async () => {

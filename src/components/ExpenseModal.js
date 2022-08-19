@@ -68,6 +68,7 @@ export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubm
 		setDueDay(-1);
 		setDueMonth('');
 		setStatus('AP');
+		onRequestClose();
 	};
 
 	const afterOpenModal = async () => {

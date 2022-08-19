@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import 'moment/locale/pt-br';
@@ -6,7 +7,6 @@ import Loading from '../tools/Loading';
 
 import { base_url } from '../config';
 
-import SavingModal from './SavingModal';
 import IncomeModal from './IncomeModal';
 import ExpenseModal from './ExpenseModal';
 import InstallmentCategoryModal from './InstallmentCategoryModal';
@@ -15,48 +15,11 @@ import PeriodFilter from './PeriodFilter';
 import Resume from './Resume';
 import Button from './Button';
 import Transactions from './Transactions';
+import calcResume from '../functions/calcResume';
+import SavingModal from './Savings/SavingModal';
 
 const currPeriod = moment().format('YYYY-MM');
 const currYear = parseInt(moment().format('YYYY'));
-
-const calcResume = (records) => {
-	let totalSavingsValue = 0;
-	let totalInstallmentsValue = 0;
-	let totalAvailableMonthValue = 0;
-	let totalIncomeValue = 0;
-	let totalExpenseValue = 0;
-	let balanceValue = 0;
-
-	if (records?.savings) {
-		totalSavingsValue = records.savings.reduce((acc, item) => {
-			return item.totalValue + acc;
-		}, 0);
-		balanceValue = totalSavingsValue;
-	}
-	if (records?.installments) {
-		totalInstallmentsValue = records.installments.reduce((acc, item) => {
-			return item.totalValue + acc;
-		}, 0);
-	}
-
-	if (records?.incomes) {
-		totalIncomeValue = records.incomes.reduce((acc, item) => {
-			return item.totalValue + acc;
-		}, 0);
-		totalAvailableMonthValue = totalIncomeValue;
-	}
-
-	if (records?.expenses) {
-		totalExpenseValue = records.expenses.reduce((acc, item) => {
-			return item.totalValue + acc;
-		}, 0);
-		totalAvailableMonthValue -= totalExpenseValue;
-	}
-
-	balanceValue += totalAvailableMonthValue;
-
-	return { balanceValue, totalSavingsValue, totalInstallmentsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue };
-};
 
 export default function ControlRecords({userToken: token}) {
 	const [ period, setPeriod ] = useState(currPeriod);
@@ -77,6 +40,7 @@ export default function ControlRecords({userToken: token}) {
 	const [ incomes, setIncomes ] = useState([]);
 	const [ expenses, setExpenses ] = useState([]);
 	const [ installmentCategories, setInstallmentCategories ] = useState([]);
+	const [ installments, setInstallments ] = useState([]);
 	
 	const [ savingModalIsOpen, setSavingModalIsOpen ] = useState(false);
 	const [ incomeModalIsOpen, setIncomeModalIsOpen ] = useState(false);
@@ -85,6 +49,28 @@ export default function ControlRecords({userToken: token}) {
 	
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
+
+	const setData = (records) => {
+		setSavings(records.savings);
+		setIncomes(records.incomes);
+		setExpenses(records.expenses);
+		setInstallmentCategories(records.installmentCategories);
+		const recordInstallments = records.installmentCategories.map(cat => cat.installments).flat();
+		setInstallments(recordInstallments);
+
+		setResume(records.savings, recordInstallments, records.incomes, records.expenses);
+	}
+	
+	const setResume = (sav, inst, inc, exp) => {
+		const { balanceValue, totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue } = calcResume(sav, inst, inc, exp);
+		
+		setBalance(balanceValue);
+		setTotalInstallment(totalInstallmentsValue);
+		setTotalSaving(totalSavingsValue);
+		setTotalAvailableMonth(totalAvailableMonthValue);
+		setTotalIncome(totalIncomeValue);
+		setTotalExpense(totalExpenseValue);
+	}
 
 	const openSavingModal = () => {
 		setSavingModalIsOpen(true);
@@ -127,6 +113,13 @@ export default function ControlRecords({userToken: token}) {
 		[ period, submited ]
 	);
 
+	// SAVINGS 
+	const fetchSavings = async (controlRecordId) => {
+		const res = await axios.get(`${base_url}/savings?controlRecordId=${controlRecordId}`, { headers: { Authorization: token }});
+		setSavings(res.data);
+		setResume(res.data, installments, incomes, expenses);
+	}
+
 	const handleSavingSubmit = async (data) => {
 		const { id, accountName, totalValue } = data;
 		if (!id) {
@@ -134,33 +127,27 @@ export default function ControlRecords({userToken: token}) {
 				accountName,
 				totalValue: +totalValue,
 				controlRecordId,
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/savings/${id}`, {
 				accountName,
 				totalValue: +totalValue,
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		}
-		setSavingModalIsOpen(false);
-		setSubmited(submited ? false : true);
+		await fetchSavings(controlRecordId);
 	};
 
 	const handleSavingDelete = async (id) => {
-		await axios.delete(`${base_url}/savings/${id}`, {
-			headers: {
-				Authorization: token
-			}
-		});
-		setSubmited(submited ? false : true);
+		await axios.delete(`${base_url}/savings/${id}`, { headers: { Authorization: token }});
+		await fetchSavings(controlRecordId);
 	};
+
+	// INCOMES
+	const fetchIncomes = async (controlRecordId) => {
+		const res = await axios.get(`${base_url}/incomes?controlRecordId=${controlRecordId}`, { headers: { Authorization: token }});
+		setIncomes(res.data);
+		setResume(savings, installments, res.data, expenses);
+	}
 
 	const handleIncomeSubmit = async (data) => {
 		const { id, accountName, totalValue, dayOfReceipt, fixed } = data;
@@ -171,35 +158,29 @@ export default function ControlRecords({userToken: token}) {
 				dayOfReceipt: dayOfReceipt ? +dayOfReceipt : null,
 				fixed,
 				controlRecordId,
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/incomes/${id}`, {
 				accountName,
 				totalValue: +totalValue,
 				dayOfReceipt: dayOfReceipt ? dayOfReceipt : null,
 				fixed
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		}
-		setIncomeModalIsOpen(false);
-		setSubmited(submited ? false : true);
+		await fetchIncomes(controlRecordId);
 	};
 
 	const handleIncomeDelete = async (id) => {
-		await axios.delete(`${base_url}/incomes/${id}`, {
-			headers: {
-				Authorization: token
-			}
-		});
-		setSubmited(submited ? false : true);
+		await axios.delete(`${base_url}/incomes/${id}`, { headers: { Authorization: token }});
+		await fetchIncomes(controlRecordId);
 	};
+
+	// EXPENSES
+	const fetchExpenses = async (controlRecordId) => {
+		const res = await axios.get(`${base_url}/expenses?controlRecordId=${controlRecordId}`, { headers: { Authorization: token }});
+		setExpenses(res.data);
+		setResume(savings, installments, incomes, res.data);
+	}
 
 	const handleExpenseSubmit = async (data) => {
 		const { id, description, totalValue, dueDay, dueMonth, status } = data;
@@ -211,11 +192,7 @@ export default function ControlRecords({userToken: token}) {
 				dueMonth: +dueMonth,
 				status,
 				controlRecordId,
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/expenses/${id}`, {
 				description,
@@ -223,24 +200,21 @@ export default function ControlRecords({userToken: token}) {
 				dueDay: dueDay ? +dueDay : null,
 				dueMonth: +dueMonth,
 				status
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		}
-		setExpenseModalIsOpen(false);
-		setSubmited(submited ? false : true);
+		await fetchExpenses(controlRecordId);
 	};
 
 	const handleExpenseDelete = async (id) => {
-		await axios.delete(`${base_url}/expenses/${id}`, {
-			headers: {
-				Authorization: token
-			}
-		});
-		setSubmited(submited ? false : true);
+		await axios.delete(`${base_url}/expenses/${id}`, { headers: { Authorization: token }});
+		await fetchExpenses(controlRecordId);
 	};
+
+	// INSTALLMENT CATEGORIES
+	const fetchInstallmentCategories = async (controlRecordId) => {
+		const res = await axios.get(`${base_url}/installment-categories?controlRecordId=${controlRecordId}`, { headers: { Authorization: token }});
+		setInstallmentCategories(res.data);
+	}
 
 	const handleInstallmentCategorySubmit = async (data) => {
 		const { id, description, dueDay, dueMonth } = data;
@@ -250,34 +224,28 @@ export default function ControlRecords({userToken: token}) {
 				dueDay: dueDay ? +dueDay : '',
 				dueMonth: +dueMonth,
 				controlRecordId,
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/installment-categories/${id}`, {
 				description,
 				dueDay: dueDay ? +dueDay : null,
 				dueMonth: +dueMonth,
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		}
-		setInstallmentCategoryModalIsOpen(false);
-		setSubmited(submited ? false : true);
+		await fetchInstallmentCategories(controlRecordId);
 	};
 
 	const handleInstallmentCategoryDelete = async (id) => {
-		await axios.delete(`${base_url}/installment-categories/${id}`, {
-			headers: {
-				Authorization: token
-			}
-		});
-		setSubmited(submited ? false : true);
+		await axios.delete(`${base_url}/installment-categories/${id}`, { headers: { Authorization: token }});
+		await fetchInstallmentCategories(controlRecordId);
 	};
+
+	// INSTALLMENTS
+	const fetchInstallments = async (controlRecordId) => {
+		const res = await axios.get(`${base_url}/installments?controlRecordId=${controlRecordId}`, { headers: { Authorization: token }});
+		setInstallments(res.data);
+		setResume(savings, res.data, incomes, expenses);
+	}
 
 	const handleInstallmentSubmit = async (data) => {
 		const { id, description, value, installment, totalInstallments, installmentCategoryId } = data;
@@ -288,33 +256,21 @@ export default function ControlRecords({userToken: token}) {
 				installment,
 				totalInstallments,
 				installmentCategoryId
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/installments/${id}`, {
 				description,
 				value,
 				installment,
 				totalInstallments
-			}, {
-				headers: {
-					Authorization: token
-				}
-			});
+			}, { headers: { Authorization: token }});
 		}
-		setSubmited(submited ? false : true);
+		await fetchInstallments(controlRecordId);
 	};
 
 	const handleInstallmentDelete = async (id) => {
-		await axios.delete(`${base_url}/installments/${id}`, {
-			headers: {
-				Authorization: token
-			}
-		});
-		setSubmited(submited ? false : true);
+		await axios.delete(`${base_url}/installments/${id}`, { headers: { Authorization: token }});
+		await fetchInstallments(controlRecordId);
 	};
 
 	const createControlRecord = async () => {
@@ -348,22 +304,7 @@ export default function ControlRecords({userToken: token}) {
 			let json = result.data;
 			setControlRecordId(json.id);
 
-			const { balanceValue, totalInstallmentsValue, totalSavingsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue } = calcResume(json);
-			setBalance(balanceValue);
-
-			setTotalInstallment(totalInstallmentsValue);
-			setTotalAvailableMonth(totalAvailableMonthValue);
-			
-			setSavings(json.savings);
-			setTotalSaving(totalSavingsValue);
-			
-			setIncomes(json.incomes);
-			setTotalIncome(totalIncomeValue);
-			
-			setExpenses(json.expenses);
-			setTotalExpense(totalExpenseValue);
-			
-			setInstallmentCategories(json.installmentCategories);
+			setData(json);
 			setIsLoaded(true);
 		} catch (err) {
 			setEnableInsert(true);
@@ -449,6 +390,7 @@ export default function ControlRecords({userToken: token}) {
 						expenses={expenses}
 						totalExpense={totalExpense}
 						installmentCategories={installmentCategories}
+						installments={installments}
 						
 						openSavingModal={openSavingModal}
 						onSavingSubmit={handleSavingSubmit}

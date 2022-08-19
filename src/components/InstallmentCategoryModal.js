@@ -56,6 +56,7 @@ export default function InstallmentCategoryModal({ token, isOpen, onRequestClose
 		setDescription('');
 		setDueDay(-1);
 		setDueMonth('');
+		onRequestClose();
 	};
 
 	const afterOpenModal = async () => {

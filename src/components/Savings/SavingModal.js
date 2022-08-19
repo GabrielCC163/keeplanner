@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
-import { base_url } from '../config';
+import { base_url } from '../../config';
 
 const customStyles = {
 	content: {
@@ -41,6 +41,7 @@ export default function SavingModal({ token, isOpen, onRequestClose, id, onSubmi
 		onSubmit({ id, accountName, totalValue });
 		setAccountName('');
 		setTotalValue('');
+		onRequestClose();
 	};
 
 	const afterOpenModal = async () => {

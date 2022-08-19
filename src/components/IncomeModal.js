@@ -58,6 +58,7 @@ export default function IncomeModal({ token, isOpen, onRequestClose, id, onSubmi
 		setTotalValue('');
 		setDayOfReceipt(-1);
 		setFixed(false);
+		onRequestClose();
 	};
 
 	const afterOpenModal = async () => {
