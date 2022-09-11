@@ -20,6 +20,7 @@ import SavingModal from './Savings/SavingModal';
 
 const currPeriod = moment().format('YYYY-MM');
 const currYear = parseInt(moment().format('YYYY'));
+const currInstallmentPeriod = currPeriod;
 
 export default function ControlRecords({userToken: token}) {
 	const [ period, setPeriod ] = useState(currPeriod);
@@ -382,6 +383,7 @@ export default function ControlRecords({userToken: token}) {
 				<>
 					<Transactions 
 						token={token}
+						currInstallmentPeriod={currInstallmentPeriod}
 						
 						savings={savings}
 						totalSaving={totalSaving}

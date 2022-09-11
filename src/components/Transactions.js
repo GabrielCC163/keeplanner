@@ -4,9 +4,13 @@ import Expense from './Expense';
 import InstallmentCategory from './InstallmentCategory';
 import Installment from './Installment';
 import Saving from './Savings/Saving';
+import { useState } from 'react';
+import capitalize from '../utils/capitalize';
+import moment from 'moment';
 
 export default function Transactions({ 
 	token,
+	currInstallmentPeriod,
 
 	savings, 
 	totalSaving, 
@@ -37,6 +41,35 @@ export default function Transactions({
 	onInstallmentSubmit,
 	onInstallmentDelete,
 }) {
+
+	const [ currentInstallments, setCurrentInstallments ] = useState(installments);
+	const [ currentInstallmentMonth, setCurrentInstallmentMonth ] = useState(currInstallmentPeriod);
+
+	const getNextMonthsInstallments = () => {
+		const updated = installments.map(ins => {
+			ins.installment++;
+			return ins;
+		})
+
+		const nextMonth = moment(`${currentInstallmentMonth}-01`).add(1, 'months').format('YYYY-MM');
+		setCurrentInstallmentMonth(nextMonth);
+
+		setCurrentInstallments(updated);
+	}
+
+	const getPrevMonthsInstallments = () => {
+		const updated = installments.map(ins => {
+			ins.installment--;
+			return ins;
+		})
+
+		const prevMonth = moment(`${currentInstallmentMonth}-01`).add(-1, 'months').format('YYYY-MM');
+		setCurrentInstallmentMonth(prevMonth);
+
+
+		setCurrentInstallments(updated);
+	}
+
 	return (
 		<>
 			<div className="section_transactions">
@@ -125,6 +158,13 @@ export default function Transactions({
 					{installmentCategories.map(({ id: categoryId, description, dueDay, dueMonth }, index) => {
 						return (
 							<>
+								{installments?.length > 0 && (
+									<div className="installments-month-selector">
+										<button onClick={getPrevMonthsInstallments}>Mês anterior</button>
+										<span>{capitalize(moment(currentInstallmentMonth).format('MMMM/YYYY'))}</span>
+										<button onClick={getNextMonthsInstallments}>Próximo mês</button>
+									</div>
+								)}
 								<InstallmentCategory
 									key={categoryId}
 									id={categoryId}
@@ -139,7 +179,7 @@ export default function Transactions({
 									onInstallmentSubmit={onInstallmentSubmit}
 								/>
 								<ul className='installments-group'>
-									{installments.filter(i => i.installmentCategoryId === categoryId).map(({id, description, value, installment, totalInstallments }, index) => {
+									{currentInstallments.filter(i => i.installmentCategoryId === categoryId && i.installment >= 1 && i.installment <= i.totalInstallments).map(({id, description, value, installment, totalInstallments }, index) => {
 										return (
 											<Installment 
 												key={id}
@@ -153,7 +193,7 @@ export default function Transactions({
 												onSubmit={onInstallmentSubmit}
 												onDelete={onInstallmentDelete}
 											/>
-										)
+											)
 									})}
 								</ul>
 							</>
