@@ -6,8 +6,6 @@ export default (savings, installments, incomes, expenses) => {
     let totalIncomeValue = 0;
     let totalExpenseValue = 0;
 
-    console.log(installments)
-
     if (savings) {
         totalSavingsValue = savings.reduce((acc, item) => {
             return item.totalValue + acc;

@@ -20,13 +20,13 @@ import SavingModal from './Savings/SavingModal';
 
 const currPeriod = moment().format('YYYY-MM');
 const currYear = parseInt(moment().format('YYYY'));
-const currInstallmentPeriod = currPeriod;
 
 export default function ControlRecords({userToken: token}) {
 	const [ period, setPeriod ] = useState(currPeriod);
 	const [ disabledPrev, setDisabledPrev ] = useState(false);
 	const [ disabledNext, setDisabledNext ] = useState(false);
 	const [ enableInsert, setEnableInsert ] = useState(true);
+	const [ enableLoadPreviousMonth, setEnableLoadPreviousMonth ] = useState(false);
 	
 	const [ controlRecordId, setControlRecordId ] = useState('');
 
@@ -121,13 +121,14 @@ export default function ControlRecords({userToken: token}) {
 		setResume(res.data, installments, incomes, expenses);
 	}
 
-	const handleSavingSubmit = async (data) => {
+	const handleSavingSubmit = async (data, newRecord = false) => {
 		const { id, accountName, totalValue } = data;
-		if (!id) {
+		const currentControlRecordId = controlRecordId || data.controlRecordId;
+		if (!id || newRecord) {
 			await axios.post(`${base_url}/savings`, {
 				accountName,
 				totalValue: +totalValue,
-				controlRecordId,
+				controlRecordId: currentControlRecordId,
 			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/savings/${id}`, {
@@ -135,7 +136,7 @@ export default function ControlRecords({userToken: token}) {
 				totalValue: +totalValue,
 			}, { headers: { Authorization: token }});
 		}
-		await fetchSavings(controlRecordId);
+		await fetchSavings(currentControlRecordId);
 	};
 
 	const handleSavingDelete = async (id) => {
@@ -150,15 +151,16 @@ export default function ControlRecords({userToken: token}) {
 		setResume(savings, installments, res.data, expenses);
 	}
 
-	const handleIncomeSubmit = async (data) => {
+	const handleIncomeSubmit = async (data, newRecord = false) => {
 		const { id, accountName, totalValue, dayOfReceipt, fixed } = data;
-		if (!id) {
+		const currentControlRecordId = controlRecordId || data.controlRecordId;
+		if (!id || newRecord) {
 			await axios.post(`${base_url}/incomes`, {
 				accountName,
 				totalValue: +totalValue,
 				dayOfReceipt: dayOfReceipt ? +dayOfReceipt : null,
 				fixed,
-				controlRecordId,
+				controlRecordId: currentControlRecordId
 			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/incomes/${id}`, {
@@ -168,7 +170,7 @@ export default function ControlRecords({userToken: token}) {
 				fixed
 			}, { headers: { Authorization: token }});
 		}
-		await fetchIncomes(controlRecordId);
+		await fetchIncomes(currentControlRecordId);
 	};
 
 	const handleIncomeDelete = async (id) => {
@@ -183,16 +185,17 @@ export default function ControlRecords({userToken: token}) {
 		setResume(savings, installments, incomes, res.data);
 	}
 
-	const handleExpenseSubmit = async (data) => {
+	const handleExpenseSubmit = async (data, newRecord = false) => {
 		const { id, description, totalValue, dueDay, dueMonth, status } = data;
-		if (!id) {
+		const currentControlRecordId = controlRecordId || data.controlRecordId;
+		if (!id || newRecord) {
 			await axios.post(`${base_url}/expenses`, {
 				description,
 				totalValue: +totalValue,
 				dueDay: dueDay ? +dueDay : '',
 				dueMonth: +dueMonth,
 				status,
-				controlRecordId,
+				controlRecordId: currentControlRecordId,
 			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/expenses/${id}`, {
@@ -203,7 +206,7 @@ export default function ControlRecords({userToken: token}) {
 				status
 			}, { headers: { Authorization: token }});
 		}
-		await fetchExpenses(controlRecordId);
+		await fetchExpenses(currentControlRecordId);
 	};
 
 	const handleExpenseDelete = async (id) => {
@@ -217,14 +220,15 @@ export default function ControlRecords({userToken: token}) {
 		setInstallmentCategories(res.data);
 	}
 
-	const handleInstallmentCategorySubmit = async (data) => {
+	const handleInstallmentCategorySubmit = async (data, newRecord = false) => {
 		const { id, description, dueDay, dueMonth } = data;
-		if (!id) {
+		const currentControlRecordId = controlRecordId || data.controlRecordId;
+		if (!id || newRecord) {
 			await axios.post(`${base_url}/installment-categories`, {
 				description,
 				dueDay: dueDay ? +dueDay : '',
 				dueMonth: +dueMonth,
-				controlRecordId,
+				controlRecordId: currentControlRecordId,
 			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/installment-categories/${id}`, {
@@ -233,7 +237,7 @@ export default function ControlRecords({userToken: token}) {
 				dueMonth: +dueMonth,
 			}, { headers: { Authorization: token }});
 		}
-		await fetchInstallmentCategories(controlRecordId);
+		await fetchInstallmentCategories(currentControlRecordId);
 	};
 
 	const handleInstallmentCategoryDelete = async (id) => {
@@ -248,15 +252,19 @@ export default function ControlRecords({userToken: token}) {
 		setResume(savings, res.data, incomes, expenses);
 	}
 
-	const handleInstallmentSubmit = async (data) => {
+	const handleInstallmentSubmit = async (data, newRecord = false) => {
 		const { id, description, value, installment, totalInstallments, installmentCategoryId } = data;
-		if (!id) {
+		const currentInstallmentCategoryId = data.installmentCategoryId || installmentCategoryId;
+		const currentControlRecordId = data.controlRecordId || controlRecordId;
+		console.log(currentControlRecordId)
+		console.log(currentInstallmentCategoryId)
+		if (!id || newRecord) {
 			await axios.post(`${base_url}/installments`, {
 				description,
 				value,
 				installment,
 				totalInstallments,
-				installmentCategoryId
+				installmentCategoryId: currentInstallmentCategoryId
 			}, { headers: { Authorization: token }});
 		} else {
 			await axios.patch(`${base_url}/installments/${id}`, {
@@ -266,7 +274,7 @@ export default function ControlRecords({userToken: token}) {
 				totalInstallments
 			}, { headers: { Authorization: token }});
 		}
-		await fetchInstallments(controlRecordId);
+		await fetchInstallments(currentControlRecordId);
 	};
 
 	const handleInstallmentDelete = async (id) => {
@@ -274,21 +282,65 @@ export default function ControlRecords({userToken: token}) {
 		await fetchInstallments(controlRecordId);
 	};
 
-	const createControlRecord = async () => {
+	const createControlRecord = async (loadPrevious = false) => {
 		const year = period.split('-')[0];
 		const month = period.split('-')[1];
 		
-		await axios.post(`${base_url}/control-records`, {
+		const newControlRecord = await axios.post(`${base_url}/control-records`, {
 			year,
 			month,
 		}, {
-			headers: {
-				Authorization: token
-			}
+			headers: { Authorization: token }
 		});
+
+		const jsonControlRecord = newControlRecord.data;
 
 		setSubmited(submited ? false : true);
 		setEnableInsert(false);
+
+		if (loadPrevious) {
+			const prevMonth = await fetchPreviousMonth();
+			setEnableInsert(false);
+			let json = prevMonth.data;
+			setControlRecordId(jsonControlRecord.id);
+
+			// setData(json);
+			for await (const saving of json.savings) {
+				await handleSavingSubmit({...saving, controlRecordId: jsonControlRecord.id}, true);
+			}
+			for await (const income of json.incomes) {
+				await handleIncomeSubmit({...income, controlRecordId: jsonControlRecord.id}, true)
+			}
+			for await (const expense of json.expenses) {
+				await handleExpenseSubmit({...expense, controlRecordId: jsonControlRecord.id}, true);
+			}
+			for await (const installmentCategory of json.installmentCategories) {
+				await handleInstallmentCategorySubmit({...installmentCategory, controlRecordId: jsonControlRecord.id}, true);
+				if (installmentCategory.installments?.length > 0) {
+					for await (const installment of installmentCategory.installments) {
+						console.log('installment')
+						await handleInstallmentSubmit({...installment, installmentCategoryId: installmentCategory.id, controlRecordId: jsonControlRecord.id}, true);
+					}
+				}
+			}
+			setIsLoaded(true);
+		}
+	}
+
+	const fetchPreviousMonth = async () => {
+		const prevPeriod = moment(`${period}-01`).add(-1, 'months').format('YYYY-MM');
+		const year = prevPeriod.split('-')[0];
+		const month = prevPeriod.split('-')[1];
+		
+		try {
+			const result = await axios.get(`${base_url}/control-records?month=${month}&year=${year}`, {
+				headers: { Authorization: token }
+			});
+	
+			setEnableLoadPreviousMonth(true);
+			return result;
+		} catch (error) {
+		}
 	}
 
 	const fetchData = async () => {
@@ -309,7 +361,7 @@ export default function ControlRecords({userToken: token}) {
 			setIsLoaded(true);
 		} catch (err) {
 			setEnableInsert(true);
-
+			fetchPreviousMonth()
 			// setSavings([]);
 			// setExpenses([]);
 			// setIncomes([]);
@@ -369,7 +421,13 @@ export default function ControlRecords({userToken: token}) {
 			
 			{enableInsert && (
 				<div className="actions">
-					<Button text={`Iniciar cadastro de registros para ${moment(`${period}-01`).format('MMMM/YYYY')}`} handleClick={createControlRecord} />
+					<Button text={`Iniciar cadastro de registros para ${moment(`${period}-01`).format('MMMM/YYYY')}`} handleClick={() => createControlRecord(false)} />
+					{enableLoadPreviousMonth && (
+						<>
+							<span style={{margin: '0 15px'}}>ou</span>
+							<Button handleClick={ () => createControlRecord(true)} text={'Carregar dados do mês anterior'} />
+						</>
+					)}
 				</div>
 			)}
 
@@ -383,7 +441,7 @@ export default function ControlRecords({userToken: token}) {
 				<>
 					<Transactions 
 						token={token}
-						currInstallmentPeriod={currInstallmentPeriod}
+						currInstallmentPeriod={period}
 						
 						savings={savings}
 						totalSaving={totalSaving}

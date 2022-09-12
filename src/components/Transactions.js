@@ -153,18 +153,24 @@ export default function Transactions({
 			<div>
 				<ul>
 					<div className='installments_title'>
-						<span>Parcelas</span>
+						<span style={{marginBottom: '10px'}}>Parcelas</span>
 					</div>
+					{installments?.length > 0 && (
+						<div className="installments-month-selector">
+							<button onClick={getPrevMonthsInstallments} className="waves-effect waves-light btn">
+								&lt;
+							</button>
+
+							<span className='installments-month-selected'>{capitalize(moment(currentInstallmentMonth).format('MMMM/YYYY'))}</span>
+
+							<button onClick={getNextMonthsInstallments} className="waves-effect waves-light btn">
+								&gt;
+							</button>
+						</div>
+					)}
 					{installmentCategories.map(({ id: categoryId, description, dueDay, dueMonth }, index) => {
 						return (
 							<>
-								{installments?.length > 0 && (
-									<div className="installments-month-selector">
-										<button onClick={getPrevMonthsInstallments}>Mês anterior</button>
-										<span>{capitalize(moment(currentInstallmentMonth).format('MMMM/YYYY'))}</span>
-										<button onClick={getNextMonthsInstallments}>Próximo mês</button>
-									</div>
-								)}
 								<InstallmentCategory
 									key={categoryId}
 									id={categoryId}
