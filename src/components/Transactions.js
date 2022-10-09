@@ -38,38 +38,11 @@ export default function Transactions({
 	onInstallmentCategorySubmit,
 	onInstallmentCategoryDelete,
 
+	getNextMonthsInstallments,
+	getPrevMonthsInstallments,
 	onInstallmentSubmit,
 	onInstallmentDelete,
 }) {
-
-	const [ currentInstallments, setCurrentInstallments ] = useState(installments);
-	const [ currentInstallmentMonth, setCurrentInstallmentMonth ] = useState(currInstallmentPeriod);
-
-	const getNextMonthsInstallments = () => {
-		const updated = installments.map(ins => {
-			ins.installment++;
-			return ins;
-		})
-
-		const nextMonth = moment(`${currentInstallmentMonth}-01`).add(1, 'months').format('YYYY-MM');
-		setCurrentInstallmentMonth(nextMonth);
-
-		setCurrentInstallments(updated);
-	}
-
-	const getPrevMonthsInstallments = () => {
-		const updated = installments.map(ins => {
-			ins.installment--;
-			return ins;
-		})
-
-		const prevMonth = moment(`${currentInstallmentMonth}-01`).add(-1, 'months').format('YYYY-MM');
-		setCurrentInstallmentMonth(prevMonth);
-
-
-		setCurrentInstallments(updated);
-	}
-
 	return (
 		<>
 			<div className="section_transactions">
@@ -157,15 +130,15 @@ export default function Transactions({
 					</div>
 					{installments?.length > 0 && (
 						<div className="installments-month-selector">
-							<button onClick={getPrevMonthsInstallments} className="waves-effect waves-light btn">
+							{<button onClick={getPrevMonthsInstallments} className="waves-effect waves-light btn">
 								&lt;
-							</button>
+							</button>}
 
-							<span className='installments-month-selected'>{capitalize(moment(currentInstallmentMonth).format('MMMM/YYYY'))}</span>
+							{<span className='installments-month-selected'>{capitalize(moment(currInstallmentPeriod).format('MMMM/YYYY'))}</span>}
 
-							<button onClick={getNextMonthsInstallments} className="waves-effect waves-light btn">
+							{<button onClick={getNextMonthsInstallments} className="waves-effect waves-light btn">
 								&gt;
-							</button>
+							</button>}
 						</div>
 					)}
 					{installmentCategories.map(({ id: categoryId, description, dueDay, dueMonth }, index) => {
@@ -185,7 +158,7 @@ export default function Transactions({
 									onInstallmentSubmit={onInstallmentSubmit}
 								/>
 								<ul className='installments-group'>
-									{currentInstallments.filter(i => i.installmentCategoryId === categoryId && i.installment >= 1 && i.installment <= i.totalInstallments).map(({id, description, value, installment, totalInstallments }, index) => {
+									{installments.filter(i => i.installmentCategoryId === categoryId && i.installment >= 1 && i.installment <= i.totalInstallments).map(({id, description, value, installment, totalInstallments }, index) => {
 										return (
 											<Installment 
 												key={id}

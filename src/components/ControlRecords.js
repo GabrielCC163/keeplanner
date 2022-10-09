@@ -23,6 +23,8 @@ const currYear = parseInt(moment().format('YYYY'));
 
 export default function ControlRecords({userToken: token}) {
 	const [ period, setPeriod ] = useState(currPeriod);
+	const [ currInstallmentPeriod, setCurrInstallmentPeriod ] = useState(currPeriod);
+
 	const [ disabledPrev, setDisabledPrev ] = useState(false);
 	const [ disabledNext, setDisabledNext ] = useState(false);
 	const [ enableInsert, setEnableInsert ] = useState(true);
@@ -243,9 +245,34 @@ export default function ControlRecords({userToken: token}) {
 	const handleInstallmentCategoryDelete = async (id) => {
 		await axios.delete(`${base_url}/installment-categories/${id}`, { headers: { Authorization: token }});
 		await fetchInstallmentCategories(controlRecordId);
+		await fetchInstallments(controlRecordId);
 	};
 
 	// INSTALLMENTS
+	const getNextMonthsInstallments = () => {
+		const updated = installments.map(ins => {
+			ins.installment++;
+			return ins;
+		})
+
+		const nextMonth = moment(`${currInstallmentPeriod}-01`).add(1, 'months').format('YYYY-MM');
+		setCurrInstallmentPeriod(nextMonth);
+		
+		setInstallments(updated)
+	}
+
+	const getPrevMonthsInstallments = () => {
+		const updated = installments.map(ins => {
+			ins.installment--;
+			return ins;
+		})
+
+		const prevMonth = moment(`${currInstallmentPeriod}-01`).add(-1, 'months').format('YYYY-MM');
+		setCurrInstallmentPeriod(prevMonth);
+
+		setInstallments(updated);
+	}
+
 	const fetchInstallments = async (controlRecordId) => {
 		const res = await axios.get(`${base_url}/installments?controlRecordId=${controlRecordId}`, { headers: { Authorization: token }});
 		setInstallments(res.data);
@@ -256,8 +283,7 @@ export default function ControlRecords({userToken: token}) {
 		const { id, description, value, installment, totalInstallments, installmentCategoryId } = data;
 		const currentInstallmentCategoryId = data.installmentCategoryId || installmentCategoryId;
 		const currentControlRecordId = data.controlRecordId || controlRecordId;
-		console.log(currentControlRecordId)
-		console.log(currentInstallmentCategoryId)
+		
 		if (!id || newRecord) {
 			await axios.post(`${base_url}/installments`, {
 				description,
@@ -274,6 +300,7 @@ export default function ControlRecords({userToken: token}) {
 				totalInstallments
 			}, { headers: { Authorization: token }});
 		}
+		
 		await fetchInstallments(currentControlRecordId);
 	};
 
@@ -340,6 +367,7 @@ export default function ControlRecords({userToken: token}) {
 			setEnableLoadPreviousMonth(true);
 			return result;
 		} catch (error) {
+			setEnableLoadPreviousMonth(false);
 		}
 	}
 
@@ -441,7 +469,7 @@ export default function ControlRecords({userToken: token}) {
 				<>
 					<Transactions 
 						token={token}
-						currInstallmentPeriod={period}
+						currInstallmentPeriod={currInstallmentPeriod}
 						
 						savings={savings}
 						totalSaving={totalSaving}
@@ -468,6 +496,8 @@ export default function ControlRecords({userToken: token}) {
 						onInstallmentCategorySubmit={handleInstallmentCategorySubmit}
 						onInstallmentCategoryDelete={handleInstallmentCategoryDelete}
 
+						getNextMonthsInstallments={getNextMonthsInstallments}
+						getPrevMonthsInstallments={getPrevMonthsInstallments}
 						onInstallmentSubmit={handleInstallmentSubmit}
 						onInstallmentDelete={handleInstallmentDelete}
 					/>
