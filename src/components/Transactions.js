@@ -44,6 +44,10 @@ export default function Transactions({
 	onInstallmentSubmit,
 	onInstallmentDelete,
 }) {
+	installmentCategories = installmentCategories.filter(cat => {
+		const qtdInst = installments.filter(i => i.installmentCategoryId === cat.id && i.installment >= 1 && i.installment <= i.totalInstallments);
+		return qtdInst.length > 0;
+	})
 	return (
 		<>
 			<div className="section_transactions">
