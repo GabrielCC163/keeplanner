@@ -4,7 +4,6 @@ import Expense from './Expense';
 import InstallmentCategory from './InstallmentCategory';
 import Installment from './Installment';
 import Saving from './Savings/Saving';
-import { useState } from 'react';
 import capitalize from '../utils/capitalize';
 import moment from 'moment';
 
@@ -40,6 +39,8 @@ export default function Transactions({
 
 	getNextMonthsInstallments,
 	getPrevMonthsInstallments,
+	enableInstNext,
+	enableInstPrev,
 	onInstallmentSubmit,
 	onInstallmentDelete,
 }) {
@@ -130,13 +131,13 @@ export default function Transactions({
 					</div>
 					{installments?.length > 0 && (
 						<div className="installments-month-selector">
-							{<button onClick={getPrevMonthsInstallments} className="waves-effect waves-light btn">
+							{enableInstPrev && <button onClick={getPrevMonthsInstallments} className="waves-effect waves-light btn">
 								&lt;
 							</button>}
 
 							{<span className='installments-month-selected'>{capitalize(moment(currInstallmentPeriod).format('MMMM/YYYY'))}</span>}
 
-							{<button onClick={getNextMonthsInstallments} className="waves-effect waves-light btn">
+							{enableInstNext && <button onClick={getNextMonthsInstallments} className="waves-effect waves-light btn">
 								&gt;
 							</button>}
 						</div>

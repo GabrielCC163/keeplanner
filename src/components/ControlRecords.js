@@ -23,7 +23,10 @@ const currYear = parseInt(moment().format('YYYY'));
 
 export default function ControlRecords({userToken: token}) {
 	const [ period, setPeriod ] = useState(currPeriod);
+
 	const [ currInstallmentPeriod, setCurrInstallmentPeriod ] = useState(currPeriod);
+	const [ enableInstPrev, setEnableInstPrev ] = useState(false);
+	const [ enableInstNext, setEnableInstNext ] = useState(false);
 
 	const [ disabledPrev, setDisabledPrev ] = useState(false);
 	const [ disabledNext, setDisabledNext ] = useState(false);
@@ -53,12 +56,24 @@ export default function ControlRecords({userToken: token}) {
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ submited, setSubmited ] = useState(false);
 
+	const checkInstPrevNext = (inst, nextMonth) => {
+		const prev = new Date(period) < new Date(nextMonth);
+		console.log(prev)
+		console.log(period)
+		console.log(nextMonth)
+		setEnableInstPrev(prev);
+
+		const next = inst.some(i => i.installment < i.totalInstallments)
+		setEnableInstNext(next);
+	}
+
 	const setData = (records) => {
 		setSavings(records.savings);
 		setIncomes(records.incomes);
 		setExpenses(records.expenses);
 		setInstallmentCategories(records.installmentCategories);
 		const recordInstallments = records.installmentCategories.map(cat => cat.installments).flat();
+		checkInstPrevNext(recordInstallments, currInstallmentPeriod);
 		setInstallments(recordInstallments);
 
 		setResume(records.savings, recordInstallments, records.incomes, records.expenses);
@@ -253,23 +268,25 @@ export default function ControlRecords({userToken: token}) {
 		const updated = installments.map(ins => {
 			ins.installment++;
 			return ins;
-		})
+		});
 
 		const nextMonth = moment(`${currInstallmentPeriod}-01`).add(1, 'months').format('YYYY-MM');
 		setCurrInstallmentPeriod(nextMonth);
 		
-		setInstallments(updated)
+		checkInstPrevNext(updated, nextMonth);
+		setInstallments(updated);
 	}
 
 	const getPrevMonthsInstallments = () => {
 		const updated = installments.map(ins => {
 			ins.installment--;
 			return ins;
-		})
+		});
 
 		const prevMonth = moment(`${currInstallmentPeriod}-01`).add(-1, 'months').format('YYYY-MM');
 		setCurrInstallmentPeriod(prevMonth);
 
+		checkInstPrevNext(updated, prevMonth)
 		setInstallments(updated);
 	}
 
@@ -498,6 +515,8 @@ export default function ControlRecords({userToken: token}) {
 
 						getNextMonthsInstallments={getNextMonthsInstallments}
 						getPrevMonthsInstallments={getPrevMonthsInstallments}
+						enableInstNext={enableInstNext}
+						enableInstPrev={enableInstPrev}
 						onInstallmentSubmit={handleInstallmentSubmit}
 						onInstallmentDelete={handleInstallmentDelete}
 					/>
