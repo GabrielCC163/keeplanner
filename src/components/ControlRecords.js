@@ -58,9 +58,6 @@ export default function ControlRecords({userToken: token}) {
 
 	const checkInstPrevNext = (inst, nextMonth) => {
 		const prev = new Date(period) < new Date(nextMonth);
-		console.log(prev)
-		console.log(period)
-		console.log(nextMonth)
 		setEnableInstPrev(prev);
 
 		const next = inst.some(i => i.installment < i.totalInstallments)
@@ -362,7 +359,6 @@ export default function ControlRecords({userToken: token}) {
 				await handleInstallmentCategorySubmit({...installmentCategory, controlRecordId: jsonControlRecord.id}, true);
 				if (installmentCategory.installments?.length > 0) {
 					for await (const installment of installmentCategory.installments) {
-						console.log('installment')
 						await handleInstallmentSubmit({...installment, installmentCategoryId: installmentCategory.id, controlRecordId: jsonControlRecord.id}, true);
 					}
 				}

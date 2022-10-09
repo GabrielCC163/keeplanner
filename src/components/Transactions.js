@@ -131,13 +131,13 @@ export default function Transactions({
 					</div>
 					{installments?.length > 0 && (
 						<div className="installments-month-selector">
-							{enableInstPrev && <button onClick={getPrevMonthsInstallments} className="waves-effect waves-light btn">
+							{<button id={`inst-btn-prev-${enableInstPrev ? 'enabled' : 'disabled'}`} onClick={enableInstPrev ? getPrevMonthsInstallments : () => {return}} className="waves-effect waves-light btn">
 								&lt;
 							</button>}
 
 							{<span className='installments-month-selected'>{capitalize(moment(currInstallmentPeriod).format('MMMM/YYYY'))}</span>}
 
-							{enableInstNext && <button onClick={getNextMonthsInstallments} className="waves-effect waves-light btn">
+							{<button id={`inst-btn-next-${enableInstNext ? 'enabled' : 'disabled'}`} onClick={enableInstNext ? getNextMonthsInstallments : () => {return}} className="waves-effect waves-light btn">
 								&gt;
 							</button>}
 						</div>
@@ -152,6 +152,8 @@ export default function Transactions({
 									description={description}
 									dueDay={dueDay}
 									dueMonth={dueMonth}
+
+									enableInsert={!enableInstPrev}
 									
 									onSubmit={onInstallmentCategorySubmit}
 									onDelete={onInstallmentCategoryDelete}
@@ -169,6 +171,8 @@ export default function Transactions({
 												value={value}
 												installment={installment}
 												totalInstallments={totalInstallments}
+
+												enableInsert={!enableInstPrev}
 												
 												onSubmit={onInstallmentSubmit}
 												onDelete={onInstallmentDelete}

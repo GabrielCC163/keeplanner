@@ -287,6 +287,12 @@ ul li {
   margin-bottom: 20px;
 }
 
+#inst-btn-next-disabled,
+#inst-btn-prev-disabled {
+  cursor: not-allowed;
+  background: black;
+}
+
 .installments-month-selector button {
   margin: 0 5px;
   font-weight: bold;
