@@ -44,15 +44,17 @@ export default function Transactions({
 	onInstallmentSubmit,
 	onInstallmentDelete,
 }) {
-	installmentCategories = installmentCategories.filter(cat => {
-		const qtdInst = installments.filter(i => i.installmentCategoryId === cat.id && i.installment >= 1 && i.installment <= i.totalInstallments);
-		return qtdInst.length > 0;
-	})
+	if (enableInstPrev) {
+		installmentCategories = installmentCategories.filter(cat => {
+			const qtdInst = installments.filter(i => i.installmentCategoryId === cat.id && i.installment >= 1 && i.installment <= i.totalInstallments);
+			return qtdInst.length > 0;
+		})
+	}
 	return (
 		<>
 			<div className="section_transactions">
 				<ul>
-					<div className='expenses_title'>
+					<div key={'savings'} className='savings_title'>
 						<span>Poupanças</span>
 						<span style={{textAlign: 'rigth'}}>Total:{' '}
 							{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaving)}
@@ -71,11 +73,11 @@ export default function Transactions({
 							/>
 						);
 					})}
-					<div className='plus radius saving' onClick={openSavingModal}></div>
+					<div key={'savings_btn'} className='plus radius saving' onClick={openSavingModal}></div>
 
-					<hr className='hr__styled' />
+					<hr key={'divisor_1'} className='hr__styled' />
 
-					<div className='incomes_title'>
+					<div key={'incomes'} className='incomes_title'>
 						<span>Receitas</span>
 						<span style={{textAlign: 'rigth'}}>Total:{' '}
 							{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalIncome)}
@@ -96,11 +98,11 @@ export default function Transactions({
 							/>
 						);
 					})}
-					<div className='plus radius income' onClick={openIncomeModal}></div>
+					<div key={'incomes_btn'} className='plus radius income' onClick={openIncomeModal}></div>
 				</ul>
 
 				<ul>
-					<div className='expenses_title'>
+					<div key={'expenses'} className='expenses_title'>
 						<span>Despesas</span>
 						<span style={{textAlign: 'rigth'}}>Total:{' '}
 							{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalExpense)}
@@ -122,19 +124,19 @@ export default function Transactions({
 							/>
 						);
 					})}
-					<div className='plus radius expense' onClick={openExpenseModal}></div>
+					<div key={'expenses_btn'} className='plus radius expense' onClick={openExpenseModal}></div>
 				</ul>
 			</div>
 
-			<hr className='hr__styled' />
+			<hr key={'divisor_2'} className='hr__styled' />
 
 			<div>
 				<ul>
-					<div className='installments_title'>
+					<div key={'installments'} className='installments_title'>
 						<span style={{marginBottom: '10px'}}>Parcelas</span>
 					</div>
 					{installments?.length > 0 && (
-						<div className="installments-month-selector">
+						<div key={'installments_month_selector'} className="installments-month-selector">
 							{<button id={`inst-btn-prev-${enableInstPrev ? 'enabled' : 'disabled'}`} onClick={enableInstPrev ? getPrevMonthsInstallments : () => {return}} className="waves-effect waves-light btn">
 								&lt;
 							</button>}
@@ -187,7 +189,7 @@ export default function Transactions({
 							</>
 						);	
 					})}
-					<div className='plus radius installment_category' onClick={openInstallmentCategoryModal}></div>
+					<div key={'installment_cat_btn'} className='plus radius installment_category' onClick={openInstallmentCategoryModal}></div>
 				</ul>
 			</div>
 		</>

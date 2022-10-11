@@ -275,7 +275,15 @@ export default function ControlRecords({userToken: token}) {
 
 	// INSTALLMENTS
 	const getNextMonthsInstallments = () => {
-		const updated = installments.map(ins => {
+		const updatedInstCat = installmentCategories.map(cat => {
+			const instCatDueDay = cat.dueDay || 10;
+			const instCatDueMonth = cat.dueMonth;
+			const nextInstCatDueDate = moment(`2022-${instCatDueMonth}-${instCatDueDay}`).add(1, 'months').format('DD-MM');
+			cat.dueDay = cat.dueDay ? +nextInstCatDueDate.split('-')[0] : null;
+			cat.dueMonth = +nextInstCatDueDate.split('-')[1];
+			return cat;
+		})
+		const updatedInst = installments.map(ins => {
 			ins.installment++;
 			return ins;
 		});
@@ -283,11 +291,21 @@ export default function ControlRecords({userToken: token}) {
 		const nextMonth = moment(`${currInstallmentPeriod}-01`).add(1, 'months').format('YYYY-MM');
 		setCurrInstallmentPeriod(nextMonth);
 		
-		checkInstPrevNext(updated, nextMonth);
-		setInstallments(updated);
+		checkInstPrevNext(updatedInst, nextMonth);
+		setInstallmentCategories(updatedInstCat);
+		setInstallments(updatedInst);
 	}
 
 	const getPrevMonthsInstallments = () => {
+		const updatedInstCat = installmentCategories.map(cat => {
+			const instCatDueDay = cat.dueDay || 10;
+			const instCatDueMonth = cat.dueMonth;
+			const nextInstCatDueDate = moment(`2022-${instCatDueMonth}-${instCatDueDay}`).add(-1, 'months').format('DD-MM');
+			cat.dueDay = cat.dueDay ? +nextInstCatDueDate.split('-')[0] : null;
+			cat.dueMonth = +nextInstCatDueDate.split('-')[1];
+			return cat;
+		})
+
 		const updated = installments.map(ins => {
 			ins.installment--;
 			return ins;
@@ -296,7 +314,8 @@ export default function ControlRecords({userToken: token}) {
 		const prevMonth = moment(`${currInstallmentPeriod}-01`).add(-1, 'months').format('YYYY-MM');
 		setCurrInstallmentPeriod(prevMonth);
 
-		checkInstPrevNext(updated, prevMonth)
+		checkInstPrevNext(updated, prevMonth);
+		setInstallmentCategories(updatedInstCat);
 		setInstallments(updated);
 	}
 
@@ -365,10 +384,25 @@ export default function ControlRecords({userToken: token}) {
 				await handleExpenseSubmit({...expense, controlRecordId: jsonControlRecord.id}, true);
 			}
 			for await (const installmentCategory of json.installmentCategories) {
-				const instCatId = await handleInstallmentCategorySubmit({...installmentCategory, controlRecordId: jsonControlRecord.id}, true);
 				if (installmentCategory.installments?.length > 0) {
-					for await (const installment of installmentCategory.installments) {
-						await handleInstallmentSubmit({...installment, installmentCategoryId: instCatId, controlRecordId: jsonControlRecord.id}, true);
+					const checkInsertCategory = installmentCategory.installments.some(inst => inst.installment < inst.totalInstallments);
+	
+					if (checkInsertCategory) {
+						const instCatDueDay = installmentCategory.dueDay || 10;
+						const instCatDueMonth = installmentCategory.dueMonth;
+						const nextInstCatDueDate = moment(`2022-${instCatDueMonth}-${instCatDueDay}`).add(1, 'months').format('DD-MM');
+						installmentCategory.dueDay = installmentCategory.dueDay ? +nextInstCatDueDate.split('-')[0] : null;
+						installmentCategory.dueMonth = +nextInstCatDueDate.split('-')[1];
+		
+						const instCatId = await handleInstallmentCategorySubmit({...installmentCategory, controlRecordId: jsonControlRecord.id}, true);
+						if (installmentCategory.installments?.length > 0) {
+							for await (const installment of installmentCategory.installments) {
+								if (installment.installment < installment.totalInstallments) {
+									installment.installment++;
+									await handleInstallmentSubmit({...installment, installmentCategoryId: instCatId, controlRecordId: jsonControlRecord.id}, true);
+								}
+							}
+						}
 					}
 				}
 			}

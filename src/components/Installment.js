@@ -31,7 +31,7 @@ export default function Installment({
 
 	return (
 		<>
-			<li style={{ background: '#FFFF', width: '90%' }}>
+			<li key={id} style={{ background: '#FFFF', width: '90%' }}>
 				<div className="transaction">
 					
 					<span style={{flex: 3.5}} className="transaction__info-category">{description}</span>

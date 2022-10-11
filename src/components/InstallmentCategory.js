@@ -47,7 +47,7 @@ export default function InstallmentCategory({
 
 	return (
 		<>
-			<li style={{ background: '#ffbe87' }}>
+			<li key={id} style={{ background: '#ffbe87' }}>
 				<div style={{height: '35px'}} className="transaction">
 					<span className="transaction__info-category">{description}</span>
 					{dueDay && (<span style={{textAlign: 'center'}} className="transaction__info-description">Vencimento: {dueDay} de {dueMonth}</span>)}

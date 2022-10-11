@@ -22,7 +22,7 @@ export default function Expense({ id, token, description, totalValue, dueDay, du
 	};
 
 	return (
-		<li style={{ background: '#f1a1a8' }}>
+		<li key={id} style={{ background: '#f1a1a8' }}>
 			<div className="transaction">
 				<div className="transaction__info">
 					<div className="transaction__info-group">

@@ -17,7 +17,7 @@ export default function Saving({ id, token, accountName, totalValue, index, onSu
 	};
 
 	return (
-		<li style={{background: '#44ffb8'}}>
+		<li key={id} style={{background: '#44ffb8'}}>
 			<div className="transaction">
 				<div className="transaction__info">
 					<div className="transaction__info-group">
