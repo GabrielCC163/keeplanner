@@ -50,6 +50,10 @@ export default function Transactions({
 			return qtdInst.length > 0;
 		})
 	}
+
+	if (installments?.length > 0) {
+		installments = installments.filter(i => i.installment >= 1 && i.installment <= i.totalInstallments)
+	}
 	return (
 		<>
 			<div className="section_transactions">
@@ -148,6 +152,12 @@ export default function Transactions({
 							</button>}
 						</div>
 					)}
+					{installments?.length > 0 && enableInstPrev && <div key={'previa'} style={{textAlign: 'center', fontSize: '17px', marginBottom: '12px'}}>Prévia do valor total em parcelas:  
+						{' '}
+						<span style={{color: '#f1a1a8', fontWeight: 500}}>
+							{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(installments.reduce((acc, item) => item.value + acc, 0))}
+						</span>
+					</div>}
 					{installmentCategories.map(({ id: categoryId, description, dueDay, dueMonth }, index) => {
 						return (
 							<>
@@ -167,7 +177,7 @@ export default function Transactions({
 									onInstallmentSubmit={onInstallmentSubmit}
 								/>
 								<ul className='installments-group'>
-									{installments.filter(i => i.installmentCategoryId === categoryId && i.installment >= 1 && i.installment <= i.totalInstallments).map(({id, description, value, installment, totalInstallments }, index) => {
+									{installments.filter(i => i.installmentCategoryId === categoryId).map(({id, description, value, installment, totalInstallments }, index) => {
 										return (
 											<Installment 
 												key={id}
@@ -189,7 +199,7 @@ export default function Transactions({
 							</>
 						);	
 					})}
-					<div key={'installment_cat_btn'} className='plus radius installment_category' onClick={openInstallmentCategoryModal}></div>
+					<div key={'installment_cat_btn'} style={{marginBottom: '100px'}} className='plus radius installment_category' onClick={openInstallmentCategoryModal}></div>
 				</ul>
 			</div>
 		</>
