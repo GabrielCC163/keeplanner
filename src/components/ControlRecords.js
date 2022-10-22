@@ -384,7 +384,9 @@ export default function ControlRecords({userToken: token}) {
 				await handleSavingSubmit({...saving, controlRecordId: jsonControlRecord.id}, true);
 			}
 			for await (const income of json.incomes) {
-				await handleIncomeSubmit({...income, controlRecordId: jsonControlRecord.id}, true)
+				if (income.fixed) {
+					await handleIncomeSubmit({...income, controlRecordId: jsonControlRecord.id}, true)
+				}
 			}
 			for await (const expense of json.expenses) {
 				const expenseDueDay = expense.dueDay || 10;
@@ -392,6 +394,7 @@ export default function ControlRecords({userToken: token}) {
 				const nextExpenseDueDate = moment(`2022-${expenseDueMonth}-${expenseDueDay}`).add(1, 'months').format('DD-MM');
 				expense.dueDay = expense.dueDay ? +nextExpenseDueDate.split('-')[0] : null;
 				expense.dueMonth = +nextExpenseDueDate.split('-')[1];
+				expense.status = 'AP';
 				await handleExpenseSubmit({...expense, controlRecordId: jsonControlRecord.id}, true);
 			}
 
