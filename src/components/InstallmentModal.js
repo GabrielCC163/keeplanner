@@ -142,7 +142,7 @@ export default function InstallmentModal({ token, isOpen, onRequestClose, id, on
 								onChange={handleChangeValue}
 							/>
 							<label htmlFor="inputValue" className="active">
-								Valor*:
+								Valor da parcela*:
 							</label>
 						</div>
 

@@ -32,6 +32,7 @@ export default function Transactions({
 	openExpenseModal,
 	onExpenseSubmit,
 	onExpenseDelete,
+	handleExpenseStatusChange,
 
 	openInstallmentCategoryModal,
 	onInstallmentCategorySubmit,
@@ -125,6 +126,7 @@ export default function Transactions({
 								status={status}
 								onSubmit={onExpenseSubmit}
 								onDelete={onExpenseDelete}
+								handleExpenseStatusChange={handleExpenseStatusChange}
 							/>
 						);
 					})}

@@ -233,6 +233,11 @@ export default function ControlRecords({userToken: token}) {
 		await fetchExpenses(controlRecordId);
 	};
 
+	const handleExpenseStatusChange = async (id, status) => {
+		await axios.patch(`${base_url}/expenses/${id}`, { status }, { headers: { Authorization: token }});
+		await fetchExpenses(controlRecordId);
+	}
+
 	// INSTALLMENT CATEGORIES
 	const fetchInstallmentCategories = async (controlRecordId) => {
 		const res = await axios.get(`${base_url}/installment-categories?controlRecordId=${controlRecordId}`, { headers: { Authorization: token }});
@@ -322,6 +327,7 @@ export default function ControlRecords({userToken: token}) {
 	const fetchInstallments = async (controlRecordId) => {
 		const res = await axios.get(`${base_url}/installments?controlRecordId=${controlRecordId}`, { headers: { Authorization: token }});
 		setInstallments(res.data);
+		checkInstPrevNext(res.data, period);
 		setResume(savings, res.data, incomes, expenses);
 	}
 
@@ -472,9 +478,11 @@ export default function ControlRecords({userToken: token}) {
 
 		if (`${selectedPeriod}-01` === `${parseInt(currYear) - 1}-01-01`) {
 			setDisabledPrev(true);
+			setDisabledNext(false);
 		}
 		if (`${selectedPeriod}-01` === `${parseInt(currYear) + 1}-12-01`) {
 			setDisabledNext(true);
+			setDisabledPrev(false);
 		}
 	};
 
@@ -506,7 +514,7 @@ export default function ControlRecords({userToken: token}) {
 				disabledPrev={disabledPrev}
 			/>
 
-			<Resume balance={balance} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />
+			{!enableInsert && <Resume balance={balance} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />}
 
 			<SavingModal token={token} isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />
 			<IncomeModal token={token} isOpen={incomeModalIsOpen} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />
@@ -557,6 +565,7 @@ export default function ControlRecords({userToken: token}) {
 						openExpenseModal={openExpenseModal}
 						onExpenseSubmit={handleExpenseSubmit}
 						onExpenseDelete={handleExpenseDelete}
+						handleExpenseStatusChange={handleExpenseStatusChange}
 
 						openInstallmentCategoryModal={openInstallmentCategoryModal}
 						onInstallmentCategorySubmit={handleInstallmentCategorySubmit}
