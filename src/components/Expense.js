@@ -6,7 +6,7 @@ import capitalize from '../utils/capitalize';
 import Switch from "react-switch";
 import { getDayOfWeek } from '../utils/months';
 
-export default function Expense({ id, token, description, totalValue, dueDay, dueMonth, status, index, onSubmit, onDelete, handleExpenseStatusChange }) {
+export default function Expense({ id, token, description, totalValue, dueDay, dueMonth, status, period, index, onSubmit, onDelete, handleExpenseStatusChange }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
 
 	dueMonth = capitalize(moment(`2022-${dueMonth}-01`).format('MMMM'));
@@ -50,7 +50,7 @@ export default function Expense({ id, token, description, totalValue, dueDay, du
 					</span>
 				</div>
 			</div>
-			<ExpenseModal token={token} isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
+			<ExpenseModal token={token} isOpen={modalIsOpen} period={period} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
 		</li>
 	);
 }

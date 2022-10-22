@@ -4,6 +4,7 @@ import axios from 'axios';
 import { base_url } from '../config';
 import moment from 'moment';
 import 'moment/locale/pt-br';
+import capitalize from '../utils/capitalize';
 
 const customStyles = {
 	content: {
@@ -26,13 +27,16 @@ const customStyles = {
 	}
 };
 
-const nextMonth = moment().add(1, 'month').format('M');
-
-export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubmit }) {
+export default function ExpenseModal({ token, period, isOpen, onRequestClose, id, onSubmit }) {
+	const dueMonthOptions = [];
+	const currMonth = {name: capitalize(moment(`${period}-01`).format('MMMM')), number: +moment(`${period}-01`).format('M')};
+	const nextMonth = {name: capitalize(moment(`${period}-01`).add(1, 'month').format('MMMM')), number: +moment(`${period}-01`).add(1, 'month').format('M')};
+	dueMonthOptions.push(currMonth, nextMonth);
+	
 	const [ description, setDescription ] = useState('');
 	const [ totalValue, setTotalValue ] = useState('');
 	const [ dueDay, setDueDay ] = useState(-1);
-	const [ dueMonth, setDueMonth ] = useState(+nextMonth);
+	const [ dueMonth, setDueMonth ] = useState(currMonth.number);
 	const [ status, setStatus ] = useState('AP');
 
 	const handleChangeDescription = (event) => {
@@ -88,7 +92,7 @@ export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubm
 			setDescription('');
 			setTotalValue('');
 			setDueDay(-1);
-			setDueMonth(nextMonth);
+			setDueMonth(currMonth.number);
 			setStatus('AP');
 		}
 	};
@@ -117,7 +121,7 @@ export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubm
 					className="modal_container"
 				>
 					<h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>
-						{id ? 'Edição' : 'Inclusão'} de registro de despesa
+						{id ? 'Edição de ' : 'Nova'} despesa
 					</h3>
 					<button className="waves-effect waves-light btn red darken-4" onClick={onRequestClose}>
 						X
@@ -177,17 +181,15 @@ export default function ExpenseModal({ token, isOpen, onRequestClose, id, onSubm
 								</label>
 							</div>
 
-							<div style={{ marginRight: '10px', width: '100%' }} className="input-field">
-								<input
-									type="number"
-									id="inputDueMonth"
-									min="1"
-									max="12"
-									step="1"
-									value={dueMonth}
-									onChange={handleChangeDueMonth}
-								/>
-								<label htmlFor="inputDueMonth" className="active">
+							<div style={{width: '100%'}} className="input-field">
+								<select id="inputDueMonth" className="browser-default" onChange={handleChangeDueMonth} value={dueMonth}>
+									{dueMonthOptions.map((op, idx) => {
+										return (
+											<option key={idx} value={op.number}>{op.name}</option>
+										)
+									})}
+								</select>
+								<label style={{ marginTop: '-4px' }} htmlFor="inputDueMonth" className="active">
 									Mês de vencimento*:
 								</label>
 							</div>

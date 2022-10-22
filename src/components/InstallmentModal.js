@@ -101,7 +101,7 @@ export default function InstallmentModal({ token, isOpen, onRequestClose, id, on
 					className="modal_container"
 				>
 					<h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>
-						{id ? 'Edição' : 'Inclusão'} de parcela
+						{id ? 'Edição de ' : 'Nova'} parcela
 					</h3>
 					<button className="waves-effect waves-light btn red darken-4" onClick={onRequestClose}>
 						X

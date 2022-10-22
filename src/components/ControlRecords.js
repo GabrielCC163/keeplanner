@@ -521,7 +521,7 @@ export default function ControlRecords({userToken: token}) {
 
 			<SavingModal token={token} isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />
 			<IncomeModal token={token} isOpen={incomeModalIsOpen} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />
-			<ExpenseModal token={token} isOpen={expenseModalIsOpen} onRequestClose={closeExpenseModal} edicao={false} onSubmit={handleExpenseSubmit} />
+			<ExpenseModal token={token} isOpen={expenseModalIsOpen} period={period} onRequestClose={closeExpenseModal} edicao={false} onSubmit={handleExpenseSubmit} />
 			<InstallmentCategoryModal token={token} isOpen={installmentCategoryModalIsOpen} onRequestClose={closeInstallmentCategoryModal} edicao={false} onSubmit={handleInstallmentCategorySubmit} />
 			
 			{enableInsert && (
@@ -547,6 +547,7 @@ export default function ControlRecords({userToken: token}) {
 					<Transactions 
 						token={token}
 						currInstallmentPeriod={currInstallmentPeriod}
+						period={period}
 						
 						savings={savings}
 						totalSaving={totalSaving}

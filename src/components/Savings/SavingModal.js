@@ -81,7 +81,7 @@ export default function SavingModal({ token, isOpen, onRequestClose, id, onSubmi
 					className="modal_container"
 				>
 					<h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>
-						{id ? 'Edição' : 'Inclusão'} de registro de poupança
+						{id ? 'Edição de ' : 'Nova'} poupança
 					</h3>
 					<button className="waves-effect waves-light btn red darken-4" onClick={onRequestClose}>
 						X

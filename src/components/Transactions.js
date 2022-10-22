@@ -10,6 +10,7 @@ import moment from 'moment';
 export default function Transactions({ 
 	token,
 	currInstallmentPeriod,
+	period,
 
 	savings, 
 	totalSaving, 
@@ -124,6 +125,7 @@ export default function Transactions({
 								dueDay={dueDay}
 								dueMonth={dueMonth}
 								status={status}
+								period={period}
 								onSubmit={onExpenseSubmit}
 								onDelete={onExpenseDelete}
 								handleExpenseStatusChange={handleExpenseStatusChange}
