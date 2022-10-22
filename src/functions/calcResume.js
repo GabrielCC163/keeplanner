@@ -23,6 +23,7 @@ export default (savings, installments, incomes, expenses) => {
         totalIncomeValue = incomes.reduce((acc, item) => {
             return item.totalValue + acc;
         }, 0);
+        balanceValue += totalIncomeValue;
         totalAvailableMonthValue = totalIncomeValue;
     }
 
@@ -30,10 +31,14 @@ export default (savings, installments, incomes, expenses) => {
         totalExpenseValue = expenses.reduce((acc, item) => {
             return item.totalValue + acc;
         }, 0);
+        const totalPaidExpenseValue = expenses
+            .filter(exp => exp.status === 'PA')
+            .reduce((acc, item) => {
+                return item.totalValue + acc;
+        }, 0);
+        balanceValue -= totalPaidExpenseValue;
         totalAvailableMonthValue -= totalExpenseValue;
     }
-
-    balanceValue += totalAvailableMonthValue;
 
     return { balanceValue, totalSavingsValue, totalInstallmentsValue, totalAvailableMonthValue, totalIncomeValue, totalExpenseValue };
 };
