@@ -320,7 +320,6 @@ ul li {
   flex: 1 1 0%;
 }
 
-
 .modal_type_expense,
 .modal_type_earning {
   font-size: 1.2rem;
@@ -337,4 +336,105 @@ ul li {
 
 input[type=radio]:disabled+span {
   color: rgba(0, 0, 0, .42);
+}
+
+.resume_balance_tooltip,
+.resume_available_tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.balance_tooltip,
+.available_tooltip {
+  position: absolute;
+  top: -26px;
+  border-radius: 50%;
+  font-weight: 600;
+  color: darkslategrey;
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.balance_tooltip {
+  left: 35px;
+}
+
+.available_tooltip {
+  left: 202px;
+}
+
+.resume_balance,
+.resume_available,
+.installment_cat_btn,
+.savings_btn,
+.incomes_btn,
+.expenses_btn {
+  position: relative;
+  display: inline-block;
+}
+
+.installment_cat_btn .inst_cat_tooltip,
+.savings_btn .saving_tooltip,
+.incomes_btn .income_tooltip,
+.expenses_btn .expense_tooltip {
+  visibility: hidden;
+  background-color: gray;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 2px 0;
+  position: absolute;
+  z-index: 1;
+  top: -37px;
+  left: 11%;
+}
+
+.installment_cat_btn .inst_cat_tooltip {
+  width: 220px;
+}
+
+.savings_btn .saving_tooltip {
+  width: 145px;
+}
+
+.incomes_btn .income_tooltip {
+  width: 124px;
+}
+
+.expenses_btn .expense_tooltip {
+  width: 134px;
+}
+
+.balance_tooltip_text,
+.available_tooltip_text {
+  visibility: hidden;
+  background-color: gray;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 2px 0;
+  position: absolute;
+  z-index: 1;
+  font-size: 12px;
+  top: -46px;
+}
+
+.balance_tooltip_text {
+  left: 5px;
+  width: 220px;
+}
+
+.available_tooltip_text {
+  left: 159px;
+  width: 110px;
+}
+
+.installment_cat_btn:hover .inst_cat_tooltip,
+.savings_btn:hover .saving_tooltip,
+.incomes_btn:hover .income_tooltip,
+.expenses_btn:hover .expense_tooltip,
+.resume_balance_tooltip:hover .balance_tooltip_text,
+.resume_available_tooltip:hover .available_tooltip_text {
+  visibility: visible;
 }

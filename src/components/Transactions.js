@@ -79,7 +79,9 @@ export default function Transactions({
 							/>
 						);
 					})}
-					<div key={'savings_btn'} className='plus radius saving' onClick={openSavingModal}></div>
+					<div key={'savings_btn'} className='plus radius saving savings_btn' onClick={openSavingModal}>
+						<span className='saving_tooltip'>Adicionar poupança</span>
+					</div>
 
 					<hr key={'divisor_1'} className='hr__styled' />
 
@@ -106,7 +108,9 @@ export default function Transactions({
 							/>
 						);
 					})}
-					<div key={'incomes_btn'} className='plus radius income' onClick={openIncomeModal}></div>
+					<div key={'incomes_btn'} className='plus radius income incomes_btn' onClick={openIncomeModal}>
+						<span className='income_tooltip'>Adicionar receita</span>
+					</div>
 				</ul>
 
 				<ul>
@@ -134,7 +138,9 @@ export default function Transactions({
 							/>
 						);
 					})}
-					<div key={'expenses_btn'} className='plus radius expense' onClick={openExpenseModal}></div>
+					<div key={'expenses_btn'} className='plus radius expense expenses_btn' onClick={openExpenseModal}>
+						<span className='expense_tooltip'>Adicionar despesa</span>
+					</div>
 				</ul>
 			</div>
 
@@ -205,7 +211,9 @@ export default function Transactions({
 							</>
 						);	
 					})}
-					<div key={'installment_cat_btn'} style={{marginBottom: '60px'}} className='plus radius installment_category' onClick={openInstallmentCategoryModal}></div>
+					<div key={'installment_cat_btn'} style={{marginBottom: '60px'}} className='plus radius installment_category installment_cat_btn' onClick={openInstallmentCategoryModal}>
+						<span className='inst_cat_tooltip'>Adicionar categoria de parcelas</span>
+					</div>
 				</ul>
 			</div>
 		</>
