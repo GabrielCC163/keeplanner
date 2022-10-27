@@ -1,4 +1,4 @@
-export const getDayOfWeek = (n) => {
+export const getMonthRef = (n) => {
     const days = {
       'Janeiro': 'Jan',
       'Fevereiro': 'Fev',

@@ -167,7 +167,7 @@ export default function ControlRecords({userToken: token}) {
 	}
 
 	const handleIncomeSubmit = async (data, newRecord = false) => {
-		const { id, accountName, totalValue, dayOfReceipt, fixed } = data;
+		const { id, accountName, totalValue, dayOfReceipt, fixed, month } = data;
 		const currentControlRecordId = data.controlRecordId || controlRecordId;
 
 		if (!id || newRecord) {
@@ -176,6 +176,7 @@ export default function ControlRecords({userToken: token}) {
 				totalValue: +totalValue,
 				dayOfReceipt: dayOfReceipt ? +dayOfReceipt : null,
 				fixed,
+				month: +month,
 				controlRecordId: currentControlRecordId
 			}, { headers: { Authorization: token }});
 		} else {
@@ -183,7 +184,8 @@ export default function ControlRecords({userToken: token}) {
 				accountName,
 				totalValue: +totalValue,
 				dayOfReceipt: dayOfReceipt ? dayOfReceipt : null,
-				fixed
+				fixed,
+				month: +month,
 			}, { headers: { Authorization: token }});
 		}
 
@@ -385,6 +387,11 @@ export default function ControlRecords({userToken: token}) {
 			}
 			for await (const income of json.incomes) {
 				if (income.fixed) {
+					const incomeDay = income.dayOfReceipt || 10;
+					const incomeMonth = income.month;
+					const nextIncomeDate = moment(`2022-${incomeMonth}-${incomeDay}`).add(1, 'months').format('DD-MM');
+					income.dayOfReceipt = income.dayOfReceipt ? +nextIncomeDate.split('-')[0] : null;
+					income.month = income.month ? +nextIncomeDate.split('-')[1] : null;
 					await handleIncomeSubmit({...income, controlRecordId: jsonControlRecord.id}, true)
 				}
 			}
@@ -520,7 +527,7 @@ export default function ControlRecords({userToken: token}) {
 			{!enableInsert && <Resume balance={balance} totalInstallment={totalInstallment} totalAvailableMonth={totalAvailableMonth} />}
 
 			<SavingModal token={token} isOpen={savingModalIsOpen} onRequestClose={closeSavingModal} edicao={false} onSubmit={handleSavingSubmit} />
-			<IncomeModal token={token} isOpen={incomeModalIsOpen} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />
+			<IncomeModal token={token} isOpen={incomeModalIsOpen} period={period} onRequestClose={closeIncomeModal} edicao={false} onSubmit={handleIncomeSubmit} />
 			<ExpenseModal token={token} isOpen={expenseModalIsOpen} period={period} onRequestClose={closeExpenseModal} edicao={false} onSubmit={handleExpenseSubmit} />
 			<InstallmentCategoryModal token={token} isOpen={installmentCategoryModalIsOpen} onRequestClose={closeInstallmentCategoryModal} edicao={false} onSubmit={handleInstallmentCategorySubmit} />
 			

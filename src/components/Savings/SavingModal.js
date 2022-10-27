@@ -17,7 +17,8 @@ const customStyles = {
 		outline: 'none',
 		padding: '20px',
 		marginRight: '-50%',
-		transform: 'translate(-50%, -50%)'
+		transform: 'translate(-50%, -50%)',
+		width: '400px'
 	},
 	overlay: {
 		zIndex: 10
@@ -80,7 +81,7 @@ export default function SavingModal({ token, isOpen, onRequestClose, id, onSubmi
 					style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
 					className="modal_container"
 				>
-					<h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>
+					<h3 style={{ marginRight: '10px', fontWeight: 'bold', color: 'black' }}>
 						{id ? 'Edição de ' : 'Nova'} poupança
 					</h3>
 					<button className="waves-effect waves-light btn red darken-4" onClick={onRequestClose}>

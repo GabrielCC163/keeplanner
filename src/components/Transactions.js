@@ -89,7 +89,7 @@ export default function Transactions({
 							{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalIncome)}
 						</span>
 					</div>
-					{incomes.map(({ id, accountName, totalValue, dayOfReceipt, fixed }, index) => {
+					{incomes.map(({ id, accountName, totalValue, dayOfReceipt, month, fixed }, index) => {
 						return (
 							<Income
 								key={id}
@@ -98,7 +98,9 @@ export default function Transactions({
 								accountName={accountName}
 								totalValue={totalValue}
 								dayOfReceipt={dayOfReceipt}
+								month={month}
 								fixed={fixed}
+								period={period}
 								onSubmit={onIncomeSubmit}
 								onDelete={onIncomeDelete}
 							/>

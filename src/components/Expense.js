@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 import capitalize from '../utils/capitalize';
 import Switch from "react-switch";
-import { getDayOfWeek } from '../utils/months';
+import { getMonthRef } from '../utils/months';
 
 export default function Expense({ id, token, description, totalValue, dueDay, dueMonth, status, period, index, onSubmit, onDelete, handleExpenseStatusChange }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
@@ -31,8 +31,8 @@ export default function Expense({ id, token, description, totalValue, dueDay, du
 						<span className="transaction__info-category">{description}</span>
 						<div>
 							<span className="transaction__info-description">Vence: </span>
-							{dueDay && (<span className="transaction__info-description">{dueDay} de {getDayOfWeek(dueMonth)}</span>)}
-							{!dueDay && (<span className="transaction__info-description">{getDayOfWeek(dueMonth)}</span>)}
+							{dueDay && (<span className="transaction__info-description">{dueDay} de {getMonthRef(dueMonth)}</span>)}
+							{!dueDay && (<span className="transaction__info-description">{getMonthRef(dueMonth)}</span>)}
 							<span className="transaction__info-description">{status === 'PA' ? ' | Pago' : ''}</span>
 						</div>
 					</div>

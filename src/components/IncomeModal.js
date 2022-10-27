@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import { base_url } from '../config';
+import capitalize from '../utils/capitalize';
+import moment from 'moment';
 
 const customStyles = {
 	content: {
@@ -17,17 +19,24 @@ const customStyles = {
 		outline: 'none',
 		padding: '20px',
 		marginRight: '-50%',
-		transform: 'translate(-50%, -50%)'
+		transform: 'translate(-50%, -50%)',
+		width: '400px'
 	},
 	overlay: {
 		zIndex: 10
 	}
 };
 
-export default function IncomeModal({ token, isOpen, onRequestClose, id, onSubmit }) {
+export default function IncomeModal({ token, period, isOpen, onRequestClose, id, onSubmit }) {
+	const monthOptions = [];
+	const currMonth = {name: capitalize(moment(`${period}-01`).format('MMMM')), number: +moment(`${period}-01`).format('M')};
+	const nextMonth = {name: capitalize(moment(`${period}-01`).add(1, 'month').format('MMMM')), number: +moment(`${period}-01`).add(1, 'month').format('M')};
+	monthOptions.push(currMonth, nextMonth);
+
 	const [ accountName, setAccountName ] = useState('');
 	const [ totalValue, setTotalValue ] = useState('');
 	const [ dayOfReceipt, setDayOfReceipt ] = useState(-1);
+	const [ month, setMonth ] = useState(currMonth.number);
 	const [ fixed, setFixed ] = useState(false);
 
 	const handleChangeAccountName = (event) => {
@@ -42,13 +51,17 @@ export default function IncomeModal({ token, isOpen, onRequestClose, id, onSubmi
 		setDayOfReceipt(event.target.value ? +event.target.value : '');
 	};
 
+	const handleChangeMonth = (event) => {
+		setMonth(event.target.value ? +event.target.value : '');
+	};
+
 	const handleChangeFixed = (event) => {
 		setFixed(event.target.value === 'true' ? true : false);
 	};
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		const payload = {id, accountName, totalValue, fixed};
+		const payload = {id, accountName, totalValue, month, fixed};
 		if (dayOfReceipt >= 1) {
 			payload['dayOfReceipt'] = dayOfReceipt
 		}
@@ -57,6 +70,7 @@ export default function IncomeModal({ token, isOpen, onRequestClose, id, onSubmi
 		setAccountName('');
 		setTotalValue('');
 		setDayOfReceipt(-1);
+		setMonth('');
 		setFixed(false);
 		onRequestClose();
 	};
@@ -72,11 +86,13 @@ export default function IncomeModal({ token, isOpen, onRequestClose, id, onSubmi
 			setAccountName(json.accountName);
 			setTotalValue(json.totalValue);
 			setDayOfReceipt(json.dayOfReceipt);
+			setMonth(json.month || '');
 			setFixed(json.fixed);
 		} else {
 			setAccountName('');
 			setTotalValue('');
 			setDayOfReceipt(-1);
+			setMonth(currMonth.number);
 			setFixed(false);
 		}
 	};
@@ -85,6 +101,7 @@ export default function IncomeModal({ token, isOpen, onRequestClose, id, onSubmi
 		setAccountName('');
 		setTotalValue('');
 		setDayOfReceipt(-1);
+		setMonth('');
 		setFixed(false);
 		onRequestClose();
 	}
@@ -103,7 +120,7 @@ export default function IncomeModal({ token, isOpen, onRequestClose, id, onSubmi
 					style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
 					className="modal_container"
 				>
-					<h3 style={{ marginRight: '10px', fontWeight: 'bold' }}>
+					<h3 style={{ marginRight: '10px', fontWeight: 'bold', color: 'black' }}>
 						{id ? 'Edição de ' : 'Nova'} receita
 					</h3>
 					<button className="waves-effect waves-light btn red darken-4" onClick={onRequestClose}>
@@ -163,19 +180,34 @@ export default function IncomeModal({ token, isOpen, onRequestClose, id, onSubmi
 								</label>
 							</div>
 
+							
 							<div style={{width: '100%'}} className="input-field">
-								<select id="inputFixed" className="browser-default" onChange={handleChangeFixed} value={fixed}>
-									<option key={1} value={false}>
-										Não
-									</option>
-									<option key={2} value={true}>
-										Sim
-									</option>
+								<select id="inputMonth" className="browser-default" onChange={handleChangeMonth} value={month}>
+									<option key={0} value={''}>-- selecione --</option>
+									{monthOptions.map((op, idx) => {
+										return (
+											<option key={idx+1} value={op.number}>{op.name}</option>
+										)
+									})}
 								</select>
-								<label htmlFor="inputFixed" className="active">
-									Recebimento fixo*:
+								<label style={{ marginTop: '-4px' }} htmlFor="inputMonth" className="active">
+									Mês:
 								</label>
 							</div>
+						</div>
+
+						<div style={{width: '100%'}} className="input-field">
+							<select id="inputFixed" className="browser-default" onChange={handleChangeFixed} value={fixed}>
+								<option key={1} value={false}>
+									Não
+								</option>
+								<option key={2} value={true}>
+									Sim
+								</option>
+							</select>
+							<label htmlFor="inputFixed" className="active">
+								Recebimento fixo*:
+							</label>
 						</div>
 					</div>
 					<input className="waves-effect waves-light btn" type="submit" value="Salvar" disabled={false} />

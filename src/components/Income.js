@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
+import capitalize from '../utils/capitalize';
 import IncomeModal from './IncomeModal';
+import moment from 'moment';
+import 'moment/locale/pt-br';
+import { getMonthRef } from '../utils/months';
 
-export default function Income({ id, token, accountName, totalValue, dayOfReceipt, fixed, index, onSubmit, onDelete }) {
+export default function Income({ id, token, accountName, totalValue, dayOfReceipt, month, fixed, status, period, index, onSubmit, onDelete }) {
 	const [ modalIsOpen, setIsOpen ] = useState(false);
+
+	month = month ? capitalize(moment(`2022-${month}-01`).format('MMMM')) : null;
 
 	const openModal = () => {
 		setIsOpen(true);
@@ -23,7 +29,8 @@ export default function Income({ id, token, accountName, totalValue, dayOfReceip
 					<div className="transaction__info-group">
 						<span className="transaction__info-category">{accountName}</span>
 						<div>
-							{dayOfReceipt && (<span className="transaction__info-description">Dia: {dayOfReceipt}</span>)}
+							{(dayOfReceipt && !month) && (<span className="transaction__info-description">Dia: {dayOfReceipt}</span>)}
+							{(dayOfReceipt && month) && (<span className="transaction__info-description">{dayOfReceipt} de {getMonthRef(month)}</span>)}
 							{fixed && dayOfReceipt && (<span className="transaction__info-description"> | Fixo</span>)}
 							{fixed && !dayOfReceipt && (<span className="transaction__info-description">Fixo</span>)}
 						</div>
@@ -41,7 +48,7 @@ export default function Income({ id, token, accountName, totalValue, dayOfReceip
 					</span>
 				</div>
 			</div>
-			<IncomeModal token={token} isOpen={modalIsOpen} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
+			<IncomeModal token={token} isOpen={modalIsOpen} period={period} onRequestClose={closeModal} id={id} onSubmit={onSubmit} />
 		</li>
 	);
 }
