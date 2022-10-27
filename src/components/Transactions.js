@@ -205,7 +205,7 @@ export default function Transactions({
 							</>
 						);	
 					})}
-					<div key={'installment_cat_btn'} style={{marginBottom: '100px'}} className='plus radius installment_category' onClick={openInstallmentCategoryModal}></div>
+					<div key={'installment_cat_btn'} style={{marginBottom: '60px'}} className='plus radius installment_category' onClick={openInstallmentCategoryModal}></div>
 				</ul>
 			</div>
 		</>

@@ -128,6 +128,11 @@ export default function ControlRecords({userToken: token}) {
 		[ period, submited ]
 	);
 
+	const deleteControlRecord = async (id) => {
+		await axios.delete(`${base_url}/control-records/${id}`, { headers: { Authorization: token }});
+		await fetchData();
+	}
+
 	// SAVINGS 
 	const fetchSavings = async (controlRecordId) => {
 		const res = await axios.get(`${base_url}/savings?controlRecordId=${controlRecordId}`, { headers: { Authorization: token }});
@@ -589,6 +594,10 @@ export default function ControlRecords({userToken: token}) {
 						onInstallmentSubmit={handleInstallmentSubmit}
 						onInstallmentDelete={handleInstallmentDelete}
 					/>
+
+					<div style={{textAlign: 'center', marginBottom: '40px'}}>
+						<button onClick={() => deleteControlRecord(controlRecordId)} style={{background: 'white', color: 'red', fontWeight: 600, borderRadius: '15px', height: '30px', padding: '5px 10px', cursor: 'pointer'}}>Excluir registro</button>
+					</div>
 				</>
 			)}
 		</div>
