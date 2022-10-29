@@ -12,15 +12,24 @@ async function loginUser(credentials) {
 export default function Login({ setToken }) {
     const [username, setUserName] = useState();
     const [password, setPassword] = useState();
+    const [ error, setError ] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const result = await loginUser({
-          username,
-          password
-        });
-
-        setToken({token: result.data.token});
+        try {
+            const result = await loginUser({
+              username,
+              password
+            });
+            
+            setToken({token: result.data.token});
+        } catch (error) {
+            if (error.response && error.response.status && error.response.status === 400) {
+                setError('Senha deve conter ao menos 7 caracteres.')
+            } else {
+                setError('Senha inválida.')
+            }
+        }
     }
 
     return(
@@ -37,8 +46,9 @@ export default function Login({ setToken }) {
                     <input type="password" onChange={e => setPassword(e.target.value)}/>
                 </label>
                 <div>
-                    <button type="submit">Login</button>
+                    <button type="submit">Login / Cadastro</button>
                 </div>
+                <span>{error}</span>
             </form>
         </div>
     )
